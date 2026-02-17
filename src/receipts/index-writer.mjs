@@ -48,6 +48,27 @@ export function updatePublishEntry(receiptsDir, publishReceipt) {
   saveIndex(receiptsDir, index);
 }
 
+/**
+ * Update the index with a fix receipt entry.
+ * @param {string} receiptsDir - Absolute path to receipts directory
+ * @param {object} fixReceipt  - A fix receipt object
+ */
+export function updateFixEntry(receiptsDir, fixReceipt) {
+  const index = loadIndex(receiptsDir);
+
+  if (!index.fix) index.fix = {};
+
+  const key = fixReceipt.repo ?? "fleet";
+  index.fix[key] = {
+    timestamp: fixReceipt.timestamp,
+    mode: fixReceipt.mode,
+    changesCount: fixReceipt.changes?.length ?? 0,
+    dryRun: fixReceipt.dryRun ?? false,
+  };
+
+  saveIndex(receiptsDir, index);
+}
+
 // ─── Internal ────────────────────────────────────────────────────────────────
 
 function loadIndex(receiptsDir) {

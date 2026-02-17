@@ -1,0 +1,43 @@
+{
+  "name": "@mcptoolshop/mcpt-publishing-assets",
+  "version": "0.3.0",
+  "description": "Logo, icon, and image asset generation for mcpt-publishing. Uses sharp.",
+  "type": "module",
+  "main": "index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "lib/",
+    "logo.png",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "sharp": "^0.33.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "mcp",
+    "publishing",
+    "assets",
+    "logo",
+    "icon",
+    "sharp",
+    "mcp-tool-shop"
+  ],
+  "author": "mcp-tool-shop",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcp-tool-shop/mcpt-publishing.git",
+    "directory": "packages/mcpt-publishing-assets"
+  },
+  "homepage": "https://github.com/mcp-tool-shop/mcpt-publishing#readme",
+  "bugs": {
+    "url": "https://github.com/mcp-tool-shop/mcpt-publishing/issues"
+  }
+}

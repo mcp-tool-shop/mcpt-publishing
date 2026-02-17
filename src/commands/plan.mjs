@@ -1,36 +1,38 @@
 /**
- * `mcpt-publishing plan` — dry-run publish plan (stub).
+ * `mcpt-publishing plan` — DEPRECATED.
  *
- * Future: compares manifest → registries → generates a publish plan
- * showing what would be published, skipped, or blocked.
+ * Use `mcpt-publishing fix --dry-run` instead.
  */
 
 import { EXIT } from "../cli/exit-codes.mjs";
 
 export const helpText = `
-mcpt-publishing plan — Generate a dry-run publish plan.
+mcpt-publishing plan — DEPRECATED
 
-Usage:
-  mcpt-publishing plan [flags]
+The plan command has been replaced by:
+  mcpt-publishing fix --dry-run       Preview metadata fixes
+  mcpt-publishing weekly --dry-run    Preview full audit → fix pipeline
 
-Flags:
-  --json        Output as JSON
-  --help        Show this help
-
-Status: Not yet implemented. Coming in a future release.
+Run 'mcpt-publishing fix --help' for details.
 `.trim();
 
 /**
- * Execute the plan command (stub).
+ * Execute the plan command (deprecated stub).
  * @param {object} flags - Parsed CLI flags
  * @returns {number} Exit code
  */
 export async function execute(flags) {
   if (flags.json) {
-    process.stdout.write(JSON.stringify({ status: "not_implemented", message: "Plan command is not yet implemented." }) + "\n");
+    process.stdout.write(JSON.stringify({
+      status: "deprecated",
+      message: "The plan command is deprecated. Use `mcpt-publishing fix --dry-run` instead.",
+      replacement: "fix --dry-run",
+    }) + "\n");
   } else {
-    process.stderr.write("Plan command is not yet implemented.\n");
-    process.stderr.write("This will generate a dry-run publish plan in a future release.\n");
+    process.stderr.write("⚠ The plan command is deprecated.\n\n");
+    process.stderr.write("Use one of these instead:\n");
+    process.stderr.write("  mcpt-publishing fix --dry-run       Preview metadata fixes\n");
+    process.stderr.write("  mcpt-publishing weekly --dry-run    Preview full audit → fix pipeline\n");
   }
   return EXIT.SUCCESS;
 }

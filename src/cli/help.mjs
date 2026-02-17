@@ -10,23 +10,30 @@ Usage:
 
 Commands:
   audit           Run publishing health audit across all registries
-  init            Scaffold publishing.config.json and starter manifest
+  fix             Apply allowlisted metadata fixes (local, --remote, --pr)
   publish         Publish packages to registries with receipts
+  weekly          Audit + fix + optionally publish (one command)
+  assets          Logo/icon generation and wiring [plugin]
   providers       List registered providers and their status
   verify-receipt  Validate a receipt file (schema + integrity)
-  plan            Dry-run publish plan [coming soon]
+  init            Scaffold publishing.config.json and starter manifest
+  plan            [deprecated — use fix --dry-run]
 
 Global flags:
   --help      Show help for a command
   --version   Show version
   --json      Machine-readable output (supported by all commands)
 
-Examples:
-  mcpt-publishing audit                          # audit all packages
-  mcpt-publishing audit --json                   # JSON output to stdout
-  mcpt-publishing publish --target npm --dry-run # dry-run npm publish
-  mcpt-publishing verify-receipt receipts/audit/2026-02-17.json
-  mcpt-publishing providers                      # list providers + env vars
+Golden path:
+  mcpt-publishing audit                           # 1. discover drift
+  mcpt-publishing fix --dry-run                   # 2. preview fixes
+  mcpt-publishing fix                             # 3. apply fixes locally
+  mcpt-publishing publish --target npm --dry-run  # 4. preview publish
+  mcpt-publishing publish --target npm            # 5. publish with receipts
+
+  # Or do it all at once:
+  mcpt-publishing weekly --dry-run                # preview everything
+  mcpt-publishing weekly --publish                # the full pipeline
 
 Environment:
   PUBLISHING_CONFIG   Path to publishing.config.json (overrides walk-up discovery)

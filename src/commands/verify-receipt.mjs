@@ -43,7 +43,14 @@ const AUDIT_REQUIRED = ["schemaVersion", "type", "timestamp", "counts", "totalPa
 /** Required fields for publish receipts. */
 const PUBLISH_REQUIRED = ["schemaVersion", "repo", "target", "version", "packageName", "commitSha", "timestamp", "artifacts"];
 
+/** Required fields for fix receipts. */
+const FIX_REQUIRED = ["schemaVersion", "type", "timestamp", "repo", "mode", "changes"];
+
+/** Required fields for assets receipts. */
+const ASSETS_REQUIRED = ["schemaVersion", "type", "timestamp", "inputs", "outputs"];
+
 const VALID_TARGETS = ["npm", "nuget", "pypi", "ghcr"];
+const VALID_FIX_MODES = ["local", "remote", "pr", "dry-run"];
 
 /**
  * Execute the verify-receipt command.
@@ -87,6 +94,27 @@ export async function execute(flags) {
       checks.push({ check: "schema", pass: false, type: "audit", msg: `Missing fields: ${missing.join(", ")}` });
     } else {
       checks.push({ check: "schema", pass: true, type: "audit" });
+    }
+  } else if (receipt.type === "fix") {
+    // Fix receipt
+    const missing = FIX_REQUIRED.filter(f => !(f in receipt));
+    if (missing.length > 0) {
+      checks.push({ check: "schema", pass: false, type: "fix", msg: `Missing fields: ${missing.join(", ")}` });
+    } else {
+      const errors = validateFixReceipt(receipt);
+      if (errors.length > 0) {
+        checks.push({ check: "schema", pass: false, type: "fix", msg: errors.join("; ") });
+      } else {
+        checks.push({ check: "schema", pass: true, type: "fix" });
+      }
+    }
+  } else if (receipt.type === "assets") {
+    // Assets receipt
+    const missing = ASSETS_REQUIRED.filter(f => !(f in receipt));
+    if (missing.length > 0) {
+      checks.push({ check: "schema", pass: false, type: "assets", msg: `Missing fields: ${missing.join(", ")}` });
+    } else {
+      checks.push({ check: "schema", pass: true, type: "assets" });
     }
   } else if (receipt.target || receipt.packageName) {
     // Publish receipt — validate against full schema
@@ -146,6 +174,36 @@ function validatePublishReceipt(r) {
         errors.push(`artifact ${art.name ?? "?"} has invalid size`);
       }
       if (!art.url) errors.push(`artifact ${art.name ?? "?"} missing url`);
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate fix receipt fields beyond presence checks.
+ * @param {object} r - Receipt object
+ * @returns {string[]} Error messages (empty = valid)
+ */
+function validateFixReceipt(r) {
+  const errors = [];
+
+  if (r.schemaVersion !== "1.0.0") {
+    errors.push(`Unknown schemaVersion: ${r.schemaVersion}`);
+  }
+  if (typeof r.repo !== "string" || !r.repo) {
+    errors.push("repo must be a non-empty string");
+  }
+  if (!VALID_FIX_MODES.includes(r.mode)) {
+    errors.push(`Invalid mode: ${r.mode} (expected one of ${VALID_FIX_MODES.join(", ")})`);
+  }
+  if (!Array.isArray(r.changes)) {
+    errors.push("changes must be an array");
+  } else {
+    for (const c of r.changes) {
+      if (!c.fixerCode) errors.push("change missing fixerCode");
+      if (!c.target) errors.push("change missing target");
+      if (!c.field) errors.push("change missing field");
     }
   }
 

@@ -19,9 +19,9 @@
 
 ## What it is
 
-**mcpt-publishing** is a portable "publishing layer" that sits between your repos and public registries.
+**mcpt-publishing** is a portable publishing layer that sits between your repos and public registries.
 
-It answers the annoying questions humans actually have:
+It answers the questions humans actually have:
 
 - *Are my registry pages stale or embarrassing?*
 - *Do tags/releases match what's published?*
@@ -38,7 +38,7 @@ Every run produces **receipts**: immutable JSON artifacts with SHA-256 hashes, c
 
 - You publish to **npm and/or NuGet** and your pages drift over time (they do).
 - You want a single place to enforce "registry truth" (versions, tags, URLs, READMEs, icons).
-- You want automation that's safe: **plans, PRs, receipts**, and no surprise pushes.
+- You want automation that's safe: **audit, fix, receipts**, and no surprise pushes.
 
 **Not for you if...**
 
@@ -67,17 +67,31 @@ This scaffolds:
 - `profiles/` (where repos/packages are declared)
 - `reports/` and `receipts/` output folders
 
-### Run an audit
+### The golden path
 
 ```bash
+# 1. Discover drift
 npx mcpt-publishing audit
+
+# 2. Preview fixes
+npx mcpt-publishing fix --dry-run
+
+# 3. Apply fixes locally
+npx mcpt-publishing fix
+
+# 4. Publish with receipts
+npx mcpt-publishing publish --target npm
+
+# 5. Verify the receipt
+npx mcpt-publishing verify-receipt receipts/publish/...json
 ```
 
-Outputs:
+Or do it all at once:
 
-- `reports/latest.md` (human-readable)
-- `reports/latest.json` (machine-readable)
-- a receipt under `receipts/`
+```bash
+npx mcpt-publishing weekly --dry-run     # preview everything
+npx mcpt-publishing weekly --publish     # the full pipeline
+```
 
 ---
 
@@ -92,23 +106,35 @@ npx mcpt-publishing audit
 npx mcpt-publishing audit --json
 ```
 
-### `mcpt-publishing plan`
+Outputs:
 
-Generates a safe plan to fix drift (no network writes). *(coming soon)*
+- `reports/latest.md` (human-readable)
+- `reports/latest.json` (machine-readable)
+- a receipt under `receipts/`
 
-```bash
-npx mcpt-publishing plan
-npx mcpt-publishing plan --repo mcp-tool-shop-org/soundboard-maui
-```
+### `mcpt-publishing fix`
 
-### `mcpt-publishing apply`
-
-Applies the plan as PRs (never pushes to main). *(coming soon)*
+Applies allowlisted metadata fixes to bring your registry pages into shape.
 
 ```bash
-npx mcpt-publishing apply
-npx mcpt-publishing apply --batch
+npx mcpt-publishing fix --dry-run                     # preview all fixes
+npx mcpt-publishing fix                               # apply locally
+npx mcpt-publishing fix --remote                      # apply via GitHub API (no checkout)
+npx mcpt-publishing fix --pr                          # apply locally + open a PR
+npx mcpt-publishing fix --repo mcp-tool-shop-org/mcpt # fix one repo only
 ```
+
+Supported fixes:
+
+| Fix | What it does |
+|-----|-------------|
+| `npm-repository` | Sets `repository` in package.json |
+| `npm-homepage` | Sets `homepage` in package.json |
+| `npm-bugs` | Sets `bugs.url` in package.json |
+| `npm-keywords` | Adds starter keywords to package.json |
+| `readme-header` | Adds logo + links to README.md |
+| `github-about` | Sets homepage/description via GitHub API |
+| `nuget-csproj` | Adds PackageProjectUrl/RepositoryUrl to .csproj |
 
 ### `mcpt-publishing publish`
 
@@ -116,8 +142,17 @@ Publishes packages to registries and generates immutable receipts.
 
 ```bash
 npx mcpt-publishing publish --repo mcp-tool-shop-org/mcpt --target npm
-npx mcpt-publishing publish --repo mcp-tool-shop-org/soundboard-maui --target nuget --cwd /path/to/repo
 npx mcpt-publishing publish --target npm --dry-run
+```
+
+### `mcpt-publishing weekly`
+
+Orchestrates the full golden path: audit, fix, and optionally publish.
+
+```bash
+npx mcpt-publishing weekly --dry-run     # audit + fix preview
+npx mcpt-publishing weekly --pr          # audit + fix as PR
+npx mcpt-publishing weekly --publish     # audit + fix + publish
 ```
 
 ### `mcpt-publishing providers`
@@ -134,22 +169,44 @@ Validates receipt files against schema and computes integrity hashes.
 
 ```bash
 npx mcpt-publishing verify-receipt receipts/audit/2026-02-17.json
-npx mcpt-publishing verify-receipt receipts/publish/mcp-tool-shop-org--mcpt/npm/1.0.1.json --json
+npx mcpt-publishing verify-receipt receipts/fix/2026-02-17-fleet.json --json
+```
+
+### `mcpt-publishing init`
+
+Scaffolds a new project. Supports `--dry-run` to preview without writing files.
+
+```bash
+npx mcpt-publishing init
+npx mcpt-publishing init --dry-run
 ```
 
 ---
 
-## Optional: assets plugin (logos + images)
+## Optional: assets plugin
 
-Core is zero-dependency. Visual updates (logos, icons, OG images) are handled by an optional plugin: *(coming soon)*
+Core is zero-dependency. Visual updates (logos, icons) are handled by an optional plugin:
 
 ```bash
 npm i -D @mcptoolshop/mcpt-publishing-assets
-npx mcpt-publishing assets doctor
-npx mcpt-publishing assets logo --repo mcp-tool-shop-org/mcpt
 ```
 
-This plugin depends on `sharp` and is kept separate so installs remain fast and reliable.
+Once installed, `mcpt-publishing` auto-detects it:
+
+```bash
+npx mcpt-publishing assets doctor              # check sharp is working
+npx mcpt-publishing assets logo --input src.png # generate icon + logo
+npx mcpt-publishing assets wire --repo owner/name  # wire into project files
+```
+
+The plugin depends on `sharp` and is kept separate so core installs remain fast and reliable.
+
+---
+
+## Upgrading from 0.2.x
+
+- `mcpt-publishing plan` is deprecated — use `mcpt-publishing fix --dry-run` instead.
+- Install the assets plugin for logo/icon generation: `npm i -D @mcptoolshop/mcpt-publishing-assets`
 
 ---
 
@@ -172,6 +229,8 @@ Schemas live in:
 
 - `schemas/profile.schema.json`
 - `schemas/receipt.schema.json`
+- `schemas/fix-receipt.schema.json`
+- `schemas/assets-receipt.schema.json`
 
 Contract + phases: `docs/CONTRACT.md`
 
@@ -199,6 +258,7 @@ These are only needed when you publish or call APIs that require auth.
 | `3` | Configuration or schema error |
 | `4` | Missing credentials for a requested operation |
 | `5` | One or more publishes failed |
+| `6` | One or more fixes failed |
 
 ---
 
@@ -213,6 +273,8 @@ They include:
 - URLs
 - SHA-256 hashes of key artifacts
 
+Types: `audit`, `publish`, `fix`, `assets`
+
 If you like receipts, you can plug this into the receipt factory as the "publishing plugin."
 
 ---
@@ -221,13 +283,7 @@ If you like receipts, you can plug this into the receipt factory as the "publish
 
 ```bash
 npm test
-node scripts/audit.mjs
-```
-
-Smoke tests:
-
-```bash
-node scripts/test-providers.mjs
+node bin/mcpt-publishing.mjs audit
 ```
 
 ---

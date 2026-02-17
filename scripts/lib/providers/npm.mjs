@@ -159,6 +159,16 @@ export default class NpmProvider extends Provider {
       findings.push({ severity: "GRAY", code: "missing-homepage", msg: `${pkg.name} has no homepage` });
     }
 
+    // Bugs URL
+    if (!meta.bugs?.url) {
+      findings.push({ severity: "GRAY", code: "missing-bugs-url", msg: `${pkg.name} has no bugs URL` });
+    }
+
+    // Keywords
+    if (!meta.keywords?.length) {
+      findings.push({ severity: "GRAY", code: "missing-keywords", msg: `${pkg.name} has no keywords` });
+    }
+
     return findings;
   }
 

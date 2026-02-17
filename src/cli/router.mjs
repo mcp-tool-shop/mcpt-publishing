@@ -12,10 +12,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 /** Lazy-loaded command map. Keys are subcommand names. */
 const COMMANDS = {
   audit:            () => import("../commands/audit.mjs"),
+  fix:              () => import("../commands/fix.mjs"),
   init:             () => import("../commands/init.mjs"),
   plan:             () => import("../commands/plan.mjs"),
   publish:          () => import("../commands/publish.mjs"),
   providers:        () => import("../commands/providers.mjs"),
+  weekly:           () => import("../commands/weekly.mjs"),
+  assets:           () => import("../commands/assets.mjs"),
   "verify-receipt": () => import("../commands/verify-receipt.mjs"),
 };
 

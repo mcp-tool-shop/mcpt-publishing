@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcp-tool-shop/mcpt-publishing/schemas/fix-receipt.schema.json",
+  "title": "Fix Receipt",
+  "description": "Record of a publishing metadata fix run.",
+  "type": "object",
+  "required": ["schemaVersion", "type", "timestamp", "repo", "mode", "changes"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "type": {
+      "type": "string",
+      "const": "fix"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the fix ran"
+    },
+    "repo": {
+      "type": "string",
+      "description": "Repo slug (owner/name) or '*' for fleet-wide"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["local", "remote", "pr", "dry-run"],
+      "description": "How fixes were applied"
+    },
+    "dryRun": {
+      "type": "boolean"
+    },
+    "prUrl": {
+      "type": ["string", "null"],
+      "description": "URL of the PR created (--pr mode only)"
+    },
+    "branchName": {
+      "type": ["string", "null"],
+      "description": "Branch name used for --pr mode"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["fixerCode", "target", "field", "before", "after"],
+        "additionalProperties": false,
+        "properties": {
+          "fixerCode": {
+            "type": "string",
+            "description": "Machine-readable fixer identifier (e.g. npm-repository)"
+          },
+          "target": {
+            "type": "string",
+            "description": "Ecosystem (npm, nuget, readme, github)"
+          },
+          "packageName": {
+            "type": "string",
+            "description": "Package name affected"
+          },
+          "field": {
+            "type": "string",
+            "description": "Field that was changed (e.g. repository.url)"
+          },
+          "before": {
+            "description": "Value before the fix (null if missing)"
+          },
+          "after": {
+            "description": "Value after the fix"
+          },
+          "file": {
+            "type": ["string", "null"],
+            "description": "Relative path of the file changed"
+          }
+        }
+      }
+    },
+    "auditBefore": {
+      "type": "object",
+      "description": "Finding counts before fix",
+      "properties": {
+        "RED": { "type": "integer", "minimum": 0 },
+        "YELLOW": { "type": "integer", "minimum": 0 },
+        "GRAY": { "type": "integer", "minimum": 0 },
+        "INFO": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "auditAfter": {
+      "type": "object",
+      "description": "Finding counts after fix (if re-audited)",
+      "properties": {
+        "RED": { "type": "integer", "minimum": 0 },
+        "YELLOW": { "type": "integer", "minimum": 0 },
+        "GRAY": { "type": "integer", "minimum": 0 },
+        "INFO": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "commitSha": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Commit SHA at time of fix (null in dry-run)"
+    },
+    "fileHashes": {
+      "type": "object",
+      "description": "SHA-256 hashes of files modified",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    }
+  }
+}

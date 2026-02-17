@@ -6,6 +6,8 @@
  *   - profiles/manifest.json  (empty skeleton)
  *   - receipts/               (empty dir)
  *   - reports/                (empty dir)
+ *
+ * Supports --dry-run to preview what would be created without writing.
  */
 
 import { writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -20,6 +22,7 @@ Usage:
 
 Flags:
   --force       Overwrite existing publishing.config.json
+  --dry-run     Preview what would be created (no writes)
   --json        Output result as JSON
   --help        Show this help
 
@@ -58,6 +61,7 @@ const STARTER_MANIFEST = {
 export async function execute(flags) {
   const cwd = process.cwd();
   const configPath = join(cwd, "publishing.config.json");
+  const dryRun = !!flags["dry-run"];
   const created = [];
 
   // Config file
@@ -70,37 +74,48 @@ export async function execute(flags) {
     return EXIT.CONFIG_ERROR;
   }
 
-  writeFileSync(configPath, JSON.stringify(STARTER_CONFIG, null, 2) + "\n");
+  if (!dryRun) {
+    writeFileSync(configPath, JSON.stringify(STARTER_CONFIG, null, 2) + "\n");
+  }
   created.push("publishing.config.json");
 
   // Profiles directory + manifest
   const profilesDir = join(cwd, "profiles");
-  mkdirSync(profilesDir, { recursive: true });
+  if (!dryRun) {
+    mkdirSync(profilesDir, { recursive: true });
+  }
   const manifestPath = join(profilesDir, "manifest.json");
   if (!existsSync(manifestPath) || flags.force) {
-    writeFileSync(manifestPath, JSON.stringify(STARTER_MANIFEST, null, 2) + "\n");
+    if (!dryRun) {
+      writeFileSync(manifestPath, JSON.stringify(STARTER_MANIFEST, null, 2) + "\n");
+    }
     created.push("profiles/manifest.json");
   }
 
   // Receipts directory
-  const receiptsDir = join(cwd, "receipts");
-  mkdirSync(receiptsDir, { recursive: true });
+  if (!dryRun) {
+    mkdirSync(join(cwd, "receipts"), { recursive: true });
+  }
   created.push("receipts/");
 
   // Reports directory
-  const reportsDir = join(cwd, "reports");
-  mkdirSync(reportsDir, { recursive: true });
+  if (!dryRun) {
+    mkdirSync(join(cwd, "reports"), { recursive: true });
+  }
   created.push("reports/");
 
   if (flags.json) {
-    process.stdout.write(JSON.stringify({ created, path: cwd }) + "\n");
+    process.stdout.write(JSON.stringify({ created, path: cwd, dryRun }) + "\n");
   } else {
-    process.stderr.write(`Initialized mcpt-publishing in ${cwd}\n`);
+    const prefix = dryRun ? "[dry-run] Would initialize" : "Initialized";
+    process.stderr.write(`${prefix} mcpt-publishing in ${cwd}\n`);
     for (const f of created) {
-      process.stderr.write(`  + ${f}\n`);
+      process.stderr.write(`  ${dryRun ? "[would create]" : "+"} ${f}\n`);
     }
-    process.stderr.write(`\nNext: edit profiles/manifest.json to add your packages, then run:\n`);
-    process.stderr.write(`  mcpt-publishing audit\n`);
+    if (!dryRun) {
+      process.stderr.write(`\nNext: edit profiles/manifest.json to add your packages, then run:\n`);
+      process.stderr.write(`  mcpt-publishing audit\n`);
+    }
   }
 
   return EXIT.SUCCESS;

@@ -1,11 +1,14 @@
 {
   "name": "@mcptoolshop/mcpt-publishing",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Publishing health auditor and receipt factory plugin for MCP Tool Shop packages.",
   "type": "module",
   "bin": {
     "mcpt-publishing": "./bin/mcpt-publishing.mjs"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "files": [
     "bin/",
     "src/",
@@ -22,6 +25,10 @@
   "scripts": {
     "audit": "node bin/mcpt-publishing.mjs audit",
     "audit:json": "node bin/mcpt-publishing.mjs audit --json",
+    "fix": "node bin/mcpt-publishing.mjs fix",
+    "fix:dry": "node bin/mcpt-publishing.mjs fix --dry-run",
+    "weekly": "node bin/mcpt-publishing.mjs weekly",
+    "weekly:dry": "node bin/mcpt-publishing.mjs weekly --dry-run",
     "test": "node scripts/test-providers.mjs"
   },
   "engines": {
