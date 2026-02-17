@@ -29,7 +29,7 @@
         "properties": {
           "ecosystem": {
             "type": "string",
-            "enum": ["npm", "nuget"]
+            "enum": ["npm", "nuget", "pypi", "ghcr"]
           },
           "name": {
             "type": "string",

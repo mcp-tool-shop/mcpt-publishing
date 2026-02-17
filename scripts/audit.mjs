@@ -1,206 +1,92 @@
 #!/usr/bin/env node
 /**
- * Publishing health audit — queries npm, NuGet, and GitHub to detect drift.
+ * Publishing health audit — queries registry providers to detect drift.
  *
  * Usage:
  *   node scripts/audit.mjs          # writes reports/latest.md + reports/latest.json
  *   node scripts/audit.mjs --json   # prints JSON to stdout only
  */
 
-import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadProviders, matchProviders } from "./lib/registry.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const MANIFEST = JSON.parse(readFileSync(join(ROOT, "profiles", "manifest.json"), "utf8"));
 const JSON_ONLY = process.argv.includes("--json");
 
-// ─── Providers ──────────────────────────────────────────────────────────────
+// ─── Ecosystem labels for markdown headings ──────────────────────────────────
 
-async function fetchNpmMeta(pkg) {
-  try {
-    const raw = execSync(`npm view ${pkg} --json 2>&1`, { encoding: "utf8", timeout: 15_000 });
-    return JSON.parse(raw);
-  } catch { return null; }
-}
+const ECOSYSTEM_LABELS = {
+  npm: "npm",
+  nuget: "NuGet",
+  pypi: "PyPI",
+  ghcr: "GHCR",
+};
 
-async function fetchNuGetMeta(id) {
-  try {
-    const url = `https://azuresearch-usnc.nuget.org/query?q=packageid:${id}&take=1`;
-    const raw = execSync(`curl -sf "${url}"`, { encoding: "utf8", timeout: 15_000 });
-    const data = JSON.parse(raw);
-    return data.data?.[0] ?? null;
-  } catch { return null; }
-}
-
-/** Flat container returns the actual list of published versions (updates faster than search). */
-function fetchNuGetVersions(id) {
-  try {
-    const url = `https://api.nuget.org/v3-flatcontainer/${id.toLowerCase()}/index.json`;
-    const raw = execSync(`curl -sf "${url}"`, { encoding: "utf8", timeout: 15_000 });
-    return JSON.parse(raw).versions ?? [];
-  } catch { return []; }
-}
-
-function getGitTags(repo) {
-  try {
-    const raw = execSync(`gh api repos/${repo}/tags --jq ".[].name" 2>&1`, { encoding: "utf8", timeout: 15_000 });
-    return raw.trim().split("\n").filter(Boolean);
-  } catch { return []; }
-}
-
-function getGitReleases(repo) {
-  try {
-    const raw = execSync(`gh api repos/${repo}/releases --jq ".[].tag_name" 2>&1`, { encoding: "utf8", timeout: 15_000 });
-    return raw.trim().split("\n").filter(Boolean);
-  } catch { return []; }
-}
-
-// ─── Severity logic ─────────────────────────────────────────────────────────
-
-function classifyNpm(pkg, meta, tags, releases) {
-  const findings = [];
-  if (!meta) {
-    findings.push({ severity: "RED", code: "npm-unreachable", msg: `Cannot reach ${pkg.name} on npm` });
-    return findings;
-  }
-
-  const ver = meta["dist-tags"]?.latest ?? meta.version;
-  const tagName = `v${ver}`;
-
-  // Published-but-not-tagged
-  if (!tags.includes(tagName)) {
-    findings.push({ severity: "RED", code: "published-not-tagged", msg: `${pkg.name}@${ver} — no git tag ${tagName}` });
-  }
-
-  // Tagged-but-not-released
-  if (tags.includes(tagName) && !releases.includes(tagName) && pkg.audience === "front-door") {
-    findings.push({ severity: "YELLOW", code: "tagged-not-released", msg: `${pkg.name} tag ${tagName} has no GitHub Release` });
-  }
-
-  // Repo URL check
-  const repoUrl = meta.repository?.url ?? "";
-  if (!repoUrl.includes(pkg.repo.split("/")[0])) {
-    findings.push({ severity: "RED", code: "wrong-repo-url", msg: `${pkg.name} repo URL "${repoUrl}" doesn't match expected ${pkg.repo}` });
-  }
-
-  // Description
-  const desc = meta.description ?? "";
-  if (!desc || desc.startsWith("<") || desc.includes("<img")) {
-    findings.push({ severity: "RED", code: "bad-description", msg: `${pkg.name} has missing/HTML description` });
-  }
-
-  // README
-  if (meta.readme === "ERROR: No README data found!" || meta.readme === "") {
-    if (pkg.audience === "front-door") {
-      findings.push({ severity: "YELLOW", code: "missing-readme", msg: `${pkg.name} has no README on npm` });
-    } else {
-      findings.push({ severity: "GRAY", code: "missing-readme", msg: `${pkg.name} (internal) has no README on npm` });
-    }
-  }
-
-  // Homepage
-  if (!meta.homepage) {
-    findings.push({ severity: "GRAY", code: "missing-homepage", msg: `${pkg.name} has no homepage` });
-  }
-
-  return findings;
-}
-
-function classifyNuGet(pkg, meta, tags, releases, flatVersions) {
-  const findings = [];
-  if (!meta) {
-    findings.push({ severity: "RED", code: "nuget-unreachable", msg: `Cannot reach ${pkg.name} on NuGet` });
-    return findings;
-  }
-
-  const searchVer = meta.version;
-  const latestFlat = flatVersions.length > 0 ? flatVersions[flatVersions.length - 1] : null;
-
-  // Detect indexing lag: flat container knows about a newer version than the search API
-  const indexingLag = latestFlat && latestFlat !== searchVer;
-  const ver = latestFlat ?? searchVer;
-  const tagName = `v${ver}`;
-
-  // Published-but-not-tagged
-  if (!tags.includes(tagName)) {
-    findings.push({ severity: "RED", code: "published-not-tagged", msg: `${pkg.name}@${ver} — no git tag ${tagName}` });
-  }
-
-  // ProjectUrl — suppress during indexing lag (metadata not propagated yet)
-  if (!meta.projectUrl && !indexingLag) {
-    if (pkg.audience === "front-door") {
-      findings.push({ severity: "YELLOW", code: "missing-project-url", msg: `${pkg.name} has no projectUrl on NuGet` });
-    }
-  }
-
-  // Icon — suppress during indexing lag
-  if (!meta.iconUrl && pkg.audience === "front-door" && !indexingLag) {
-    findings.push({ severity: "YELLOW", code: "missing-icon", msg: `${pkg.name} (front-door) has no icon` });
-  }
-
-  // Indexing lag notice (non-failing)
-  if (indexingLag) {
-    findings.push({
-      severity: "INFO",
-      code: "pending-index",
-      msg: `${pkg.name} v${latestFlat} published but search API still shows v${searchVer} — retry in 60-120 min`
-    });
-  }
-
-  // Description
-  if (!meta.description) {
-    findings.push({ severity: "GRAY", code: "missing-description", msg: `${pkg.name} has no description` });
-  }
-
-  return findings;
-}
-
-// ─── Main ───────────────────────────────────────────────────────────────────
+// ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const results = { npm: [], nuget: [], generated: new Date().toISOString() };
+  const providers = await loadProviders();
+
+  // Shared context for tag/release caching (replaces old tagCache/releaseCache)
+  const ctx = {
+    tags: new Map(),
+    releases: new Map(),
+  };
+
+  // Find the GitHub provider (context loader) — must run before ecosystem providers
+  const ghProvider = providers.find(p => p.name === "github");
+
+  // Build results object with an array per ecosystem key present in the manifest
+  const results = {};
+  for (const key of Object.keys(MANIFEST)) {
+    if (Array.isArray(MANIFEST[key])) results[key] = [];
+  }
+  results.generated = new Date().toISOString();
+
   const allFindings = [];
 
-  // Cache tags/releases per repo (avoid duplicate API calls for monorepos)
-  const tagCache = {};
-  const releaseCache = {};
-  function getTags(repo) {
-    if (!tagCache[repo]) tagCache[repo] = getGitTags(repo);
-    return tagCache[repo];
-  }
-  function getReleases(repo) {
-    if (!releaseCache[repo]) releaseCache[repo] = getGitReleases(repo);
-    return releaseCache[repo];
-  }
+  // Process each ecosystem section from the manifest
+  for (const [ecosystem, packages] of Object.entries(MANIFEST)) {
+    if (!Array.isArray(packages)) continue;
+    process.stderr.write(`Auditing ${packages.length} ${ECOSYSTEM_LABELS[ecosystem] ?? ecosystem} packages...\n`);
 
-  // npm packages
-  process.stderr.write(`Auditing ${MANIFEST.npm.length} npm packages...\n`);
-  for (const pkg of MANIFEST.npm) {
-    const meta = await fetchNpmMeta(pkg.name);
-    const tags = getTags(pkg.repo);
-    const releases = getReleases(pkg.repo);
-    const ver = meta?.["dist-tags"]?.latest ?? meta?.version ?? "?";
-    const findings = classifyNpm(pkg, meta, tags, releases);
-    const entry = { name: pkg.name, version: ver, repo: pkg.repo, audience: pkg.audience, findings };
-    results.npm.push(entry);
-    allFindings.push(...findings.map(f => ({ ...f, pkg: pkg.name, ecosystem: "npm" })));
-  }
+    for (const pkg of packages) {
+      const entry = { ...pkg, ecosystem };
 
-  // NuGet packages
-  process.stderr.write(`Auditing ${MANIFEST.nuget.length} NuGet packages...\n`);
-  for (const pkg of MANIFEST.nuget) {
-    const meta = await fetchNuGetMeta(pkg.name);
-    const flatVersions = fetchNuGetVersions(pkg.name);
-    const tags = getTags(pkg.repo);
-    const releases = getReleases(pkg.repo);
-    const ver = flatVersions.length > 0 ? flatVersions[flatVersions.length - 1] : (meta?.version ?? "?");
-    const findings = classifyNuGet(pkg, meta, tags, releases, flatVersions);
-    const entry = { name: pkg.name, version: ver, repo: pkg.repo, audience: pkg.audience, findings };
-    results.nuget.push(entry);
-    allFindings.push(...findings.map(f => ({ ...f, pkg: pkg.name, ecosystem: "nuget" })));
+      // Ensure GitHub context (tags + releases) is loaded for this repo
+      if (ghProvider && ghProvider.detect(entry)) {
+        await ghProvider.audit(entry, ctx);
+      }
+
+      // Find the ecosystem-specific provider(s)
+      const ecosystemProviders = matchProviders(providers, entry).filter(p => p.name !== "github");
+
+      let version = "?";
+      const findings = [];
+
+      for (const provider of ecosystemProviders) {
+        const result = await provider.audit(entry, ctx);
+        if (result.version && result.version !== "?") version = result.version;
+        findings.push(...result.findings);
+      }
+
+      const resultEntry = {
+        name: pkg.name,
+        version,
+        repo: pkg.repo,
+        audience: pkg.audience,
+        findings,
+      };
+
+      if (results[ecosystem]) {
+        results[ecosystem].push(resultEntry);
+      }
+      allFindings.push(...findings.map(f => ({ ...f, pkg: pkg.name, ecosystem })));
+    }
   }
 
   // Counts
@@ -234,7 +120,7 @@ async function main() {
     lines.push("");
   }
 
-  // Group by repo
+  // Group by package
   const byRepo = {};
   for (const f of allFindings) {
     const key = f.pkg;
@@ -254,27 +140,21 @@ async function main() {
     }
   }
 
-  // npm summary table
-  lines.push("## npm Packages");
-  lines.push("");
-  lines.push("| Package | Version | Audience | Issues |");
-  lines.push("|---------|---------|----------|--------|");
-  for (const e of results.npm) {
-    const issues = e.findings.length === 0 ? "clean" : e.findings.map(f => f.severity).join(", ");
-    lines.push(`| ${e.name} | ${e.version} | ${e.audience} | ${issues} |`);
-  }
-  lines.push("");
+  // Summary tables per ecosystem
+  for (const [ecosystem, packages] of Object.entries(MANIFEST)) {
+    if (!Array.isArray(packages) || packages.length === 0) continue;
+    const label = ECOSYSTEM_LABELS[ecosystem] ?? ecosystem;
 
-  // NuGet summary table
-  lines.push("## NuGet Packages");
-  lines.push("");
-  lines.push("| Package | Version | Audience | Issues |");
-  lines.push("|---------|---------|----------|--------|");
-  for (const e of results.nuget) {
-    const issues = e.findings.length === 0 ? "clean" : e.findings.map(f => f.severity).join(", ");
-    lines.push(`| ${e.name} | ${e.version} | ${e.audience} | ${issues} |`);
+    lines.push(`## ${label} Packages`);
+    lines.push("");
+    lines.push("| Package | Version | Audience | Issues |");
+    lines.push("|---------|---------|----------|--------|");
+    for (const e of results[ecosystem] ?? []) {
+      const issues = e.findings.length === 0 ? "clean" : e.findings.map(f => f.severity).join(", ");
+      lines.push(`| ${e.name} | ${e.version} | ${e.audience} | ${issues} |`);
+    }
+    lines.push("");
   }
-  lines.push("");
 
   const md = lines.join("\n");
 

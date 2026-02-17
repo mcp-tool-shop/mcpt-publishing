@@ -29,12 +29,36 @@
 - GitHub Releases created for front-door packages
 - 7 npm metadata-fix publishes, 25 git tags, 12 GitHub Releases
 
-## Phase 2 — Automated Audit + Storefront (current)
+## Phase 2 — Automated Audit + Storefront (complete)
 
 - `scripts/audit.mjs` — automated drift detection with severity engine
 - Weekly GitHub Action updates a pinned "Publishing Health" issue
 - Front-door NuGet packages get icons + rendered READMEs
 - Release strategy locked (see below)
+
+## Phase 3 — Storefront Professionalism (complete)
+
+- All repos have logo, README header, LICENSE, homepage, topics
+- RED=0, YELLOW=0 across 26 repos
+
+## Phase 5 — Multi-Registry Publishing + GitHub Glue + Receipts (current)
+
+- **Provider plugin system:** `scripts/lib/provider.mjs` base class with `detect()`, `audit()`, `plan()`, `publish()`, `receipt()` methods
+- **Auto-discovery:** `scripts/lib/registry.mjs` scans `providers/*.mjs`, validates interface compliance
+- **Extracted providers:** npm, NuGet, GitHub (context loader) — logic extracted verbatim from audit.mjs
+- **New providers:** PyPI (pypi.org JSON API), GHCR (GitHub Packages API via `gh api`)
+- **Receipt system:** `schemas/receipt.schema.json` + `scripts/lib/receipt-writer.mjs` — immutable JSON receipts at `receipts/publish/<owner>--<name>/<target>/<version>.json`
+- **GitHub Glue:** `scripts/lib/github-glue.mjs` — attaches receipts to releases, updates health issue
+- **Refactored audit.mjs:** thin orchestrator that loads providers, iterates manifest, delegates to providers — output format unchanged
+- Adding a new registry = drop a single `.mjs` file in `scripts/lib/providers/`
+
+### Receipt Schema (v1.0.0)
+
+Required fields: `schemaVersion`, `repo` (owner/name), `target` (npm|nuget|pypi|ghcr), `version`, `packageName`, `commitSha` (40-hex), `timestamp` (ISO 8601), `artifacts[]` (name, sha256, size, url). Optional: `metadata{}`.
+
+### Receipt Immutability
+
+Receipts are append-only. Once `receipts/publish/<slug>/<target>/<version>.json` is written, it cannot be overwritten. The receipt writer enforces this at the filesystem level.
 
 ## Registry Truth Policy
 

@@ -137,14 +137,14 @@
   "nuget": [
     {
       "name": "Soundboard.Client",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "repo": "mcp-tool-shop-org/soundboard-maui",
       "audience": "front-door",
       "findings": [
         {
           "severity": "INFO",
           "code": "pending-index",
-          "msg": "Soundboard.Client v1.1.0 published but search API still shows v1.0.0 — retry in 60-120 min"
+          "msg": "Soundboard.Client v1.2.0 published but search API still shows v1.0.0 — retry in 60-120 min"
         }
       ]
     },
@@ -289,11 +289,14 @@
       "findings": []
     }
   ],
-  "generated": "2026-02-17T08:12:19.917Z",
+  "pypi": [],
+  "ghcr": [],
+  "generated": "2026-02-17T11:32:34.960Z",
   "counts": {
     "RED": 0,
     "YELLOW": 0,
     "GRAY": 0,
     "INFO": 1
-  }
+  },
+  "totalPackages": 40
 }

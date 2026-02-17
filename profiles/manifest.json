@@ -43,5 +43,7 @@
     { "name": "LinuxDevTyper.Core", "repo": "mcp-tool-shop-org/linux-dev-typer", "audience": "internal" },
     { "name": "DevOpTyper.Content", "repo": "mcp-tool-shop-org/meta-content-system", "audience": "internal" },
     { "name": "VortexKit", "repo": "mcp-tool-shop-org/ScalarScope-Desktop", "audience": "internal" }
-  ]
+  ],
+  "pypi": [],
+  "ghcr": []
 }
