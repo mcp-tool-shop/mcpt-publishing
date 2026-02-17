@@ -8,7 +8,7 @@
 |----------|--------|-------|-------|
 | npm published-not-tagged (RED) | 16 of 19 | 0 of 19 | All 16 tagged + 6 pre-tagged for pending publishes |
 | NuGet repos with zero tags (RED) | 7 repos | 0 repos | 5 repos tagged (build-governor, Attestia-Desktop, CursorAssist, MouseTrainer, CodeClone-Desktop) |
-| npm wrong repo URLs (RED) | 3 packages | 1 remaining | a11y-evidence-engine + a11y-mcp-tools published; venvkit blocked on branch merge |
+| npm wrong repo URLs (RED) | 3 packages | 0 | All 3 published with correct org URLs. Unscoped `venvkit` deprecated. |
 | npm HTML description (RED) | 1 package | 0 | voice-engine-dsp v0.0.2 published |
 | npm missing README (YELLOW) | 3 packages | 0 | pathway v0.2.2, a11y-ci v0.2.2, physics-svg v0.1.1 published |
 | Tags without GitHub Releases (YELLOW) | 7 repos | 0 front-door | 8 releases created for front-door packages |
@@ -113,9 +113,13 @@ All 6 metadata-fix packages published successfully:
 | @mcptoolshop/a11y-ci | 0.2.2 | README added | published |
 | @mcptoolshop/physics-svg | 0.1.1 | README + files fix | published |
 
-### 1 remaining item
+### venvkit resolved
 
-- **@mcptoolshop/venvkit** — `feat/audit-improvements` branch has the fix (v0.2.1 with correct org URLs) but `main` is diverged. Needs branch merge decision before publishing.
+- **@mcptoolshop/venvkit** v0.2.1 published from reconciled `main`
+- Merged `feat/audit-improvements` → `main` (scoped identity wins, Docker/GHCR preserved)
+- Dependabot fixed to monthly/grouped/limit-3 per CLAUDE.md rules
+- Unscoped `venvkit` deprecated on npm: "Use @mcptoolshop/venvkit instead"
+- Tag v0.2.1 + GitHub Release created
 
 ## Repos re-archived
 
