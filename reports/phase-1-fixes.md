@@ -8,9 +8,9 @@
 |----------|--------|-------|-------|
 | npm published-not-tagged (RED) | 16 of 19 | 0 of 19 | All 16 tagged + 6 pre-tagged for pending publishes |
 | NuGet repos with zero tags (RED) | 7 repos | 0 repos | 5 repos tagged (build-governor, Attestia-Desktop, CursorAssist, MouseTrainer, CodeClone-Desktop) |
-| npm wrong repo URLs (RED) | 3 packages | 1 pending | a11y-evidence-engine + a11y-mcp-tools fixed; venvkit blocked on branch merge |
-| npm HTML description (RED) | 1 package | 0 | voice-engine-dsp fixed (pending publish) |
-| npm missing README (YELLOW) | 3 packages | 0 | pathway, a11y-ci, physics-svg fixed (pending publish) |
+| npm wrong repo URLs (RED) | 3 packages | 1 remaining | a11y-evidence-engine + a11y-mcp-tools published; venvkit blocked on branch merge |
+| npm HTML description (RED) | 1 package | 0 | voice-engine-dsp v0.0.2 published |
+| npm missing README (YELLOW) | 3 packages | 0 | pathway v0.2.2, a11y-ci v0.2.2, physics-svg v0.1.1 published |
 | Tags without GitHub Releases (YELLOW) | 7 repos | 0 front-door | 8 releases created for front-door packages |
 | Soundboard.Client projectUrl (YELLOW) | missing | source fixed | PackageProjectUrl added; takes effect on next NuGet publish |
 
@@ -100,20 +100,20 @@
 |---------|-----|--------|
 | Soundboard.Client | Added PackageProjectUrl to csproj | Source fixed; takes effect on next NuGet version |
 
-## Pending User Actions
+## Publishes Completed (2026-02-17)
 
-### 6 npm publishes (require 2FA OTP)
+All 6 metadata-fix packages published successfully:
 
-```bash
-cd F:\AI\a11y-evidence-engine && npm publish --access public
-cd F:\AI\a11y-mcp-tools && npm publish --access public
-cd F:\AI\_npm-fixes\mcp-voice-engine\packages\voice-engine-dsp && npm publish
-cd F:\AI\_npm-fixes\pathway\npm && npm publish
-cd F:\AI\_npm-fixes\accessibility-suite\src\a11y-ci\npm && npm publish
-cd F:\AI\_npm-fixes\siege-kit\packages\physics-svg && npm publish
-```
+| Package | Version | Fix | Status |
+|---------|---------|-----|--------|
+| @mcptoolshop/a11y-evidence-engine | 0.3.1 | repo URL → org | published |
+| @mcptoolshop/a11y-mcp-tools | 0.4.1 | repo URL → org | published |
+| @mcptoolshop/voice-engine-dsp | 0.0.2 | plain-text description | published |
+| @mcptoolshop/pathway | 0.2.2 | README added | published |
+| @mcptoolshop/a11y-ci | 0.2.2 | README added | published |
+| @mcptoolshop/physics-svg | 0.1.1 | README + files fix | published |
 
-### 1 blocked item
+### 1 remaining item
 
 - **@mcptoolshop/venvkit** — `feat/audit-improvements` branch has the fix (v0.2.1 with correct org URLs) but `main` is diverged. Needs branch merge decision before publishing.
 
