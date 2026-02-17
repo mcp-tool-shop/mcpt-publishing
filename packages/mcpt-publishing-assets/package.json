@@ -1,6 +1,6 @@
 {
   "name": "@mcptoolshop/mcpt-publishing-assets",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Logo, icon, and image asset generation for mcpt-publishing. Uses sharp.",
   "type": "module",
   "main": "index.mjs",
