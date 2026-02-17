@@ -1,0 +1,1084 @@
+{
+  "generated": "2026-02-17T08:24:21.756Z",
+  "counts": {
+    "RED": 21,
+    "YELLOW": 42,
+    "GRAY": 31
+  },
+  "repos": [
+    {
+      "repo": "mcp-tool-shop-org/mcpt",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/mcpt"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/mcpt has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/mcpt has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "CLI for discovering and running MCP Tool Shop tools",
+        "homepage": "",
+        "topics": [
+          "cli",
+          "developer-tools",
+          "mcp",
+          "mcp-tools",
+          "model-context-protocol",
+          "python",
+          "tool-discovery"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/mcp-tool-registry",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/mcp-tool-registry"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/mcp-tool-registry has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/mcp-tool-registry has no homepage URL in About"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/mcp-tool-registry has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Metadata-only registry for MCP Tool Shop tools",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/websketch-cli",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/websketch"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/websketch-cli has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/websketch-cli has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Command-line tool for WebSketch IR - render, fingerprint, and diff UI captures",
+        "homepage": "",
+        "topics": [
+          "cli",
+          "developer-tools",
+          "fingerprinting",
+          "python",
+          "rendering",
+          "ui-testing",
+          "visual-diff"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/websketch-ir",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/websketch-ir"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/websketch-ir has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/websketch-ir has no homepage URL in About"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/websketch-ir has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Grammar-based UI representation for LLMs - capture web pages as semantic primitives",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/voice-soundboard-mcp",
+        "@mcptoolshop/voice-soundboard-core"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/mcp-voice-soundboard README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/mcp-voice-soundboard has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Text-to-speech MCP server for AI agents — 12 voices, emotion spans, SSML-lite, multi-speaker dialogue, SFX tags, guardrails.",
+        "homepage": "",
+        "topics": [
+          "ai-agent",
+          "ai-agents",
+          "kokoro",
+          "mcp",
+          "mcp-server",
+          "model-context-protocol",
+          "python",
+          "soundboard",
+          "spatial-audio",
+          "speech-synthesis",
+          "text-to-speech",
+          "tts",
+          "typescript",
+          "voice",
+          "windows"
+        ],
+        "hasLicense": true,
+        "logoFile": "assets/logo-dark.jpg",
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/ConsensusOS",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/consensus-os"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/ConsensusOS has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/ConsensusOS README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/ConsensusOS has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Plugin-based multi-chain consensus control plane — zero deps, fail-closed invariants, deterministic replay",
+        "homepage": "",
+        "topics": [
+          "consensus",
+          "deterministic",
+          "distributed-systems",
+          "event-sourcing",
+          "governance",
+          "multi-chain",
+          "python"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/synthesis",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/synthesis"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/synthesis has no logo file"
+        },
+        {
+          "severity": "RED",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/synthesis README has no logo at top"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/synthesis README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/synthesis has no homepage URL in About"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/synthesis has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Synthesis is a deterministic engine that composes behavioral constraints and interaction signals into coherent response strategies. It avoids emotion modeling, focusing on auditable rules like preserving agency, avoiding false reassurance, maintaining presence, and repair after failure—built for CI.",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/pathway",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/pathway"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/pathway has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/pathway README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/pathway has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Append-only journey engine where undo never erases learning",
+        "homepage": "",
+        "topics": [
+          "event-sourcing",
+          "fastapi",
+          "journey",
+          "learning",
+          "python",
+          "sqlite",
+          "undo"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/mcp-file-forge",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/file-forge"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/mcp-file-forge has no logo file"
+        },
+        {
+          "severity": "RED",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/mcp-file-forge README has no logo at top"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/mcp-file-forge README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/mcp-file-forge has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "MCP server for file operations and project scaffolding - Windows-first, secure, sandboxed",
+        "homepage": "",
+        "topics": [
+          "file-operations",
+          "mcp",
+          "mcp-server",
+          "model-context-protocol",
+          "python",
+          "sandboxed",
+          "scaffolding",
+          "windows"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/accessibility-suite",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/accessibility-suite",
+        "@mcptoolshop/a11y-ci"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/accessibility-suite has no logo file"
+        },
+        {
+          "severity": "RED",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/accessibility-suite README has no logo at top"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/accessibility-suite README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/accessibility-suite has no homepage URL in About"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/accessibility-suite has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Unified monorepo for accessibility testing, evidence generation, and WCAG compliance tooling",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/venvkit",
+      "audience": "front-door",
+      "packages": [
+        "@mcptoolshop/venvkit"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/venvkit has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/venvkit README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/venvkit has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Python virtual environment diagnostic toolkit for Windows ML workflows",
+        "homepage": "",
+        "topics": [
+          "developer-tools",
+          "diagnostics",
+          "gpu",
+          "ml",
+          "python",
+          "virtual-environment",
+          "windows"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/soundboard-maui",
+      "audience": "front-door",
+      "packages": [
+        "Soundboard.Client",
+        "Soundboard.Maui.Audio"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/soundboard-maui README has no logo at top"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/soundboard-maui README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "RED",
+          "code": "missing-license",
+          "msg": "mcp-tool-shop-org/soundboard-maui has no LICENSE file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/soundboard-maui has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Cross-platform .NET MAUI desktop client for the Sound Board voice engine.",
+        "homepage": "",
+        "topics": [
+          "cross-platform",
+          "csharp",
+          "desktop-app",
+          "dotnet",
+          "maui",
+          "text-to-speech",
+          "tts",
+          "voice"
+        ],
+        "hasLicense": false,
+        "logoFile": "assets/icon.png",
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/prov-engine-js",
+      "audience": "internal",
+      "packages": [
+        "@mcptoolshop/prov-engine-js"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/prov-engine-js has no logo file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/prov-engine-js README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/prov-engine-js has no homepage URL in About"
+        },
+        {
+          "severity": "GRAY",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/prov-engine-js has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Zero-dependency Node.js provenance engine implementing prov-spec",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/mcp-voice-engine",
+      "audience": "internal",
+      "packages": [
+        "@mcptoolshop/voice-engine-dsp"
+      ],
+      "findings": [
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/mcp-voice-engine README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "homepage-not-site",
+          "msg": "mcp-tool-shop-org/mcp-voice-engine homepage \"https://github.com/mcp-tool-shop-org/mcp-voice-engine\" doesn't point to mcptoolshop.com"
+        }
+      ],
+      "meta": {
+        "description": "Streaming TTS inference backend — powers mcp-voice-soundboard — Kokoro/Piper synthesis, zero-copy PCM",
+        "homepage": "https://github.com/mcp-tool-shop-org/mcp-voice-engine",
+        "topics": [
+          "audio-processing",
+          "autotune",
+          "prosody",
+          "real-time",
+          "speech-synthesis",
+          "streaming",
+          "text-to-speech",
+          "typescript",
+          "voice-dsp"
+        ],
+        "hasLicense": true,
+        "logoFile": "assets/logo.png",
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/siege-kit",
+      "audience": "internal",
+      "packages": [
+        "@mcptoolshop/physics-svg"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/siege-kit has no logo file"
+        },
+        {
+          "severity": "RED",
+          "code": "missing-readme",
+          "msg": "mcp-tool-shop-org/siege-kit has no README.md"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/siege-kit has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Physics-based backgammon engine — SVG rendering, devtools, and turborepo monorepo (TypeScript)",
+        "homepage": "",
+        "topics": [
+          "backgammon",
+          "game",
+          "monorepo",
+          "physics",
+          "pnpm",
+          "svg",
+          "turborepo",
+          "typescript"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": false
+      }
+    },
+    {
+      "repo": "mcp-tool-shop/mcp-tool-shop",
+      "audience": "internal",
+      "packages": [
+        "@mcptoolshop/promo-kit"
+      ],
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "missing-license",
+          "msg": "mcp-tool-shop/mcp-tool-shop has no LICENSE file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop/mcp-tool-shop has no homepage URL in About"
+        },
+        {
+          "severity": "GRAY",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop/mcp-tool-shop has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Profile README",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": false,
+        "logoFile": "logo.png",
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/InControl-Desktop",
+      "audience": "internal",
+      "packages": [
+        "InControl.Core",
+        "InControl.Inference"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/InControl-Desktop has no logo file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/InControl-Desktop README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/InControl-Desktop has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Privacy-first local LLM chat for Windows — WinUI 3, RTX-accelerated, multi-backend (Ollama, llama.cpp)",
+        "homepage": "",
+        "topics": [
+          "ai",
+          "csharp",
+          "llm",
+          "local-inference",
+          "ollama",
+          "rtx",
+          "windows",
+          "windows-app-sdk",
+          "winui3"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/Attestia-Desktop",
+      "audience": "internal",
+      "packages": [
+        "Attestia.Core",
+        "Attestia.Client",
+        "Attestia.Sidecar"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/Attestia-Desktop has no logo file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/Attestia-Desktop README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/Attestia-Desktop has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Financial intent verification for Windows — WinUI 3 app and .NET SDK for blockchain attestation and reconciliation",
+        "homepage": "",
+        "topics": [
+          "attestation",
+          "blockchain",
+          "csharp",
+          "dotnet",
+          "financial-infrastructure",
+          "windows",
+          "windows-app-sdk",
+          "winui3"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/build-governor",
+      "audience": "internal",
+      "packages": [
+        "Gov.Protocol",
+        "Gov.Common"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/build-governor has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/build-governor README has no logo at top"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/build-governor README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "RED",
+          "code": "missing-license",
+          "msg": "mcp-tool-shop-org/build-governor has no LICENSE file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/build-governor has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Build Reliability Governor - Prevents build system memory exhaustion on Windows",
+        "homepage": "",
+        "topics": [
+          "build-tools",
+          "ci",
+          "developer-tools",
+          "memory-management",
+          "python",
+          "resource-management",
+          "windows"
+        ],
+        "hasLicense": false,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/CursorAssist",
+      "audience": "internal",
+      "packages": [
+        "CursorAssist.Canon",
+        "CursorAssist.Trace",
+        "CursorAssist.Engine",
+        "CursorAssist.Policy"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/CursorAssist has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/CursorAssist README has no logo at top"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/CursorAssist README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/CursorAssist has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "CursorAssist — A deterministic engine for assistive cursor control, UI accessibility benchmarking, and adaptive motor-skill training.",
+        "homepage": "",
+        "topics": [
+          "accessibility",
+          "assistive-technology",
+          "cursor-control",
+          "deterministic",
+          "dotnet",
+          "fitts-law"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/MouseTrainer",
+      "audience": "internal",
+      "packages": [
+        "MouseTrainer.Domain",
+        "MouseTrainer.Simulation",
+        "MouseTrainer.Audio"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/MouseTrainer has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/MouseTrainer README has no logo at top"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/MouseTrainer README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/MouseTrainer has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Deterministic mouse dexterity trainer — precision, control, and flow. .NET 8 MAUI, fixed-timestep simulation, composable blueprint mutators.",
+        "homepage": "",
+        "topics": [
+          "deterministic",
+          "dotnet",
+          "game",
+          "maui",
+          "windows"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/runforge-desktop",
+      "audience": "internal",
+      "packages": [
+        "RunForgeDesktop.Core"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/runforge-desktop has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/runforge-desktop README has no logo at top"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/runforge-desktop README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/runforge-desktop has no homepage URL in About"
+        },
+        {
+          "severity": "GRAY",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/runforge-desktop has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "Windows desktop app for browsing and inspecting RunForge ML training artifacts (read-only viewer)",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/CodeClone-Desktop",
+      "audience": "internal",
+      "packages": [
+        "CodeClone.Domain"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/CodeClone-Desktop has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/CodeClone-Desktop README has no logo at top"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/CodeClone-Desktop README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "RED",
+          "code": "missing-license",
+          "msg": "mcp-tool-shop-org/CodeClone-Desktop has no LICENSE file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/CodeClone-Desktop has no homepage URL in About"
+        },
+        {
+          "severity": "GRAY",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/CodeClone-Desktop has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "MAUI desktop viewer for CodeClone coverage analysis",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": false,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/linux-dev-typer",
+      "audience": "internal",
+      "packages": [
+        "LinuxDevTyper.Core"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/linux-dev-typer has no logo file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/linux-dev-typer README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "RED",
+          "code": "missing-license",
+          "msg": "mcp-tool-shop-org/linux-dev-typer has no LICENSE file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/linux-dev-typer has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "Code-typing practice for developers — Avalonia UI, adaptive difficulty, trend tracking, fatigue detection",
+        "homepage": "",
+        "topics": [
+          "adaptive-learning",
+          "avalonia",
+          "cross-platform",
+          "csharp",
+          "developer-tools",
+          "dotnet",
+          "typing-practice"
+        ],
+        "hasLicense": false,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/meta-content-system",
+      "audience": "internal",
+      "packages": [
+        "DevOpTyper.Content"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/meta-content-system has no logo file"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "readme-no-logo",
+          "msg": "mcp-tool-shop-org/meta-content-system README has no logo at top"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/meta-content-system README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "RED",
+          "code": "missing-description",
+          "msg": "mcp-tool-shop-org/meta-content-system has no GitHub description"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/meta-content-system has no homepage URL in About"
+        },
+        {
+          "severity": "GRAY",
+          "code": "no-topics",
+          "msg": "mcp-tool-shop-org/meta-content-system has no topics/tags"
+        }
+      ],
+      "meta": {
+        "description": "",
+        "homepage": "",
+        "topics": [],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    },
+    {
+      "repo": "mcp-tool-shop-org/ScalarScope-Desktop",
+      "audience": "internal",
+      "packages": [
+        "VortexKit"
+      ],
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-logo",
+          "msg": "mcp-tool-shop-org/ScalarScope-Desktop has no logo file"
+        },
+        {
+          "severity": "GRAY",
+          "code": "readme-no-site-link",
+          "msg": "mcp-tool-shop-org/ScalarScope-Desktop README has no link back to MCP Tool Shop"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "mcp-tool-shop-org/ScalarScope-Desktop has no homepage URL in About"
+        }
+      ],
+      "meta": {
+        "description": "ASPIRE Scalar Vortex Visualizer - .NET MAUI desktop app for visualizing training dynamics",
+        "homepage": "",
+        "topics": [
+          "ai",
+          "aspire",
+          "csharp",
+          "desktop-app",
+          "dotnet",
+          "maui",
+          "training-dynamics",
+          "visualization"
+        ],
+        "hasLicense": true,
+        "logoFile": null,
+        "hasReadme": true
+      }
+    }
+  ]
+}
