@@ -35,6 +35,15 @@ async function fetchNuGetMeta(id) {
   } catch { return null; }
 }
 
+/** Flat container returns the actual list of published versions (updates faster than search). */
+function fetchNuGetVersions(id) {
+  try {
+    const url = `https://api.nuget.org/v3-flatcontainer/${id.toLowerCase()}/index.json`;
+    const raw = execSync(`curl -sf "${url}"`, { encoding: "utf8", timeout: 15_000 });
+    return JSON.parse(raw).versions ?? [];
+  } catch { return []; }
+}
+
 function getGitTags(repo) {
   try {
     const raw = execSync(`gh api repos/${repo}/tags --jq ".[].name" 2>&1`, { encoding: "utf8", timeout: 15_000 });
@@ -100,14 +109,19 @@ function classifyNpm(pkg, meta, tags, releases) {
   return findings;
 }
 
-function classifyNuGet(pkg, meta, tags, releases) {
+function classifyNuGet(pkg, meta, tags, releases, flatVersions) {
   const findings = [];
   if (!meta) {
     findings.push({ severity: "RED", code: "nuget-unreachable", msg: `Cannot reach ${pkg.name} on NuGet` });
     return findings;
   }
 
-  const ver = meta.version;
+  const searchVer = meta.version;
+  const latestFlat = flatVersions.length > 0 ? flatVersions[flatVersions.length - 1] : null;
+
+  // Detect indexing lag: flat container knows about a newer version than the search API
+  const indexingLag = latestFlat && latestFlat !== searchVer;
+  const ver = latestFlat ?? searchVer;
   const tagName = `v${ver}`;
 
   // Published-but-not-tagged
@@ -115,16 +129,25 @@ function classifyNuGet(pkg, meta, tags, releases) {
     findings.push({ severity: "RED", code: "published-not-tagged", msg: `${pkg.name}@${ver} — no git tag ${tagName}` });
   }
 
-  // ProjectUrl
-  if (!meta.projectUrl) {
+  // ProjectUrl — suppress during indexing lag (metadata not propagated yet)
+  if (!meta.projectUrl && !indexingLag) {
     if (pkg.audience === "front-door") {
       findings.push({ severity: "YELLOW", code: "missing-project-url", msg: `${pkg.name} has no projectUrl on NuGet` });
     }
   }
 
-  // Icon
-  if (!meta.iconUrl && pkg.audience === "front-door") {
+  // Icon — suppress during indexing lag
+  if (!meta.iconUrl && pkg.audience === "front-door" && !indexingLag) {
     findings.push({ severity: "YELLOW", code: "missing-icon", msg: `${pkg.name} (front-door) has no icon` });
+  }
+
+  // Indexing lag notice (non-failing)
+  if (indexingLag) {
+    findings.push({
+      severity: "INFO",
+      code: "pending-index",
+      msg: `${pkg.name} v${latestFlat} published but search API still shows v${searchVer} — retry in 60-120 min`
+    });
   }
 
   // Description
@@ -170,10 +193,11 @@ async function main() {
   process.stderr.write(`Auditing ${MANIFEST.nuget.length} NuGet packages...\n`);
   for (const pkg of MANIFEST.nuget) {
     const meta = await fetchNuGetMeta(pkg.name);
+    const flatVersions = fetchNuGetVersions(pkg.name);
     const tags = getTags(pkg.repo);
     const releases = getReleases(pkg.repo);
-    const ver = meta?.version ?? "?";
-    const findings = classifyNuGet(pkg, meta, tags, releases);
+    const ver = flatVersions.length > 0 ? flatVersions[flatVersions.length - 1] : (meta?.version ?? "?");
+    const findings = classifyNuGet(pkg, meta, tags, releases, flatVersions);
     const entry = { name: pkg.name, version: ver, repo: pkg.repo, audience: pkg.audience, findings };
     results.nuget.push(entry);
     allFindings.push(...findings.map(f => ({ ...f, pkg: pkg.name, ecosystem: "nuget" })));
@@ -183,7 +207,8 @@ async function main() {
   const red = allFindings.filter(f => f.severity === "RED");
   const yellow = allFindings.filter(f => f.severity === "YELLOW");
   const gray = allFindings.filter(f => f.severity === "GRAY");
-  results.counts = { RED: red.length, YELLOW: yellow.length, GRAY: gray.length };
+  const info = allFindings.filter(f => f.severity === "INFO");
+  results.counts = { RED: red.length, YELLOW: yellow.length, GRAY: gray.length, INFO: info.length };
 
   if (JSON_ONLY) {
     process.stdout.write(JSON.stringify(results, null, 2) + "\n");
@@ -196,13 +221,14 @@ async function main() {
   lines.push("");
   lines.push(`> Generated: ${results.generated}`);
   lines.push("");
-  lines.push(`**RED: ${red.length}** | **YELLOW: ${yellow.length}** | **GRAY: ${gray.length}**`);
+  const infoLabel = info.length > 0 ? ` | **INFO: ${info.length}** (indexing)` : "";
+  lines.push(`**RED: ${red.length}** | **YELLOW: ${yellow.length}** | **GRAY: ${gray.length}**${infoLabel}`);
   lines.push("");
 
-  if (red.length + yellow.length > 0) {
+  if (red.length + yellow.length + info.length > 0) {
     lines.push("## Top Actions");
     lines.push("");
-    for (const f of [...red, ...yellow].slice(0, 10)) {
+    for (const f of [...red, ...yellow, ...info].slice(0, 10)) {
       lines.push(`- **${f.severity}** ${f.msg}`);
     }
     lines.push("");
@@ -257,7 +283,8 @@ async function main() {
   writeFileSync(join(ROOT, "reports", "latest.md"), md);
   writeFileSync(join(ROOT, "reports", "latest.json"), JSON.stringify(results, null, 2));
 
-  process.stderr.write(`\nDone. RED=${red.length} YELLOW=${yellow.length} GRAY=${gray.length}\n`);
+  const infoSuffix = info.length > 0 ? ` INFO=${info.length} (indexing — retry later)` : "";
+  process.stderr.write(`\nDone. RED=${red.length} YELLOW=${yellow.length} GRAY=${gray.length}${infoSuffix}\n`);
   process.stderr.write(`Reports written to reports/latest.md and reports/latest.json\n`);
 }
 

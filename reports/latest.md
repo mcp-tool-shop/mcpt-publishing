@@ -1,19 +1,17 @@
 # Publishing Health Report
 
-> Generated: 2026-02-17T07:38:16.985Z
+> Generated: 2026-02-17T08:12:19.917Z
 
-**RED: 0** | **YELLOW: 2** | **GRAY: 0**
+**RED: 0** | **YELLOW: 0** | **GRAY: 0** | **INFO: 1** (indexing)
 
 ## Top Actions
 
-- **YELLOW** Soundboard.Client has no projectUrl on NuGet
-- **YELLOW** Soundboard.Client (front-door) has no icon
+- **INFO** Soundboard.Client v1.1.0 published but search API still shows v1.0.0 — retry in 60-120 min
 
 ## Findings by Package
 
 ### Soundboard.Client
-- **YELLOW** [missing-project-url] Soundboard.Client has no projectUrl on NuGet
-- **YELLOW** [missing-icon] Soundboard.Client (front-door) has no icon
+- **INFO** [pending-index] Soundboard.Client v1.1.0 published but search API still shows v1.0.0 — retry in 60-120 min
 
 ## npm Packages
 
@@ -43,7 +41,7 @@
 
 | Package | Version | Audience | Issues |
 |---------|---------|----------|--------|
-| Soundboard.Client | 1.0.0 | front-door | YELLOW, YELLOW |
+| Soundboard.Client | 1.1.0 | front-door | INFO |
 | Soundboard.Maui.Audio | 1.0.0 | internal | clean |
 | InControl.Core | 1.2.0 | internal | clean |
 | InControl.Inference | 1.0.0 | internal | clean |
