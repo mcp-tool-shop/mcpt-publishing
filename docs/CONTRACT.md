@@ -22,19 +22,19 @@
 - `profiles/` — one profile per shipping repo
 - `schemas/profile.schema.json` — machine-readable profile contract
 
-## Phase 1 — Automated Drift Detection (planned)
+## Phase 1 — Registry Truth Sync (complete)
 
-- Scripts that re-run the Phase 0 audit programmatically
-- Tag reconciliation (add missing tags to match registry reality)
-- GitHub Release creation for tagged versions
-- CI workflow to run audit on schedule or manual trigger
+- All published npm/NuGet versions tagged in git
+- Metadata fixes published (repo URLs, descriptions, READMEs)
+- GitHub Releases created for front-door packages
+- 7 npm metadata-fix publishes, 25 git tags, 12 GitHub Releases
 
-## Phase 2 — Storefront Hygiene (planned)
+## Phase 2 — Automated Audit + Storefront (current)
 
-- Front-door packages get icons, polished READMEs, correct metadata
-- Internal packages get labeled clearly
-- Unlist decisions executed
-- Registry pages reviewed for rendering quality
+- `scripts/audit.mjs` — automated drift detection with severity engine
+- Weekly GitHub Action updates a pinned "Publishing Health" issue
+- Front-door NuGet packages get icons + rendered READMEs
+- Release strategy locked (see below)
 
 ## Registry Truth Policy
 
@@ -54,9 +54,32 @@ Instead, we reconcile everything else (tags, releases, source files) to match.
 | `source-mismatch` | Source claims version Y, registry latest is X | RED |
 | `stale` | Everything consistent but old | GRAY |
 
-## Remediation Policy (Phase 1+)
+## Remediation Policy
 
 - `published-not-tagged` → add matching `vX.Y.Z` tag
 - `source-mismatch` → reconcile source to registry truth
-- `tagged-not-released` → optionally create GitHub Release
+- `tagged-not-released` → create GitHub Release (front-door required, internal optional)
 - `stale` → no action unless chosen
+
+## Release Strategy (locked)
+
+### Tag format
+- All packages: `vX.Y.Z` (semver with `v` prefix)
+- Monorepos with multiple packages at the same version: single `vX.Y.Z` tag
+- Monorepos where packages version independently: deferred to Phase 3 (use per-package prefixes)
+
+### Publishing rule
+Every `npm publish` or `dotnet nuget push` MUST have a matching git tag created
+immediately after (or before, if tag-driven). The audit script flags violations as RED.
+
+### Front-door packages
+- Tag required
+- GitHub Release required
+- README must render on registry page
+- Correct repo/project URLs required
+
+### Internal packages
+- Tag required
+- GitHub Release optional
+- README optional (GRAY if missing)
+- Correct repo URL required

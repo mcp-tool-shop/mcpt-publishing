@@ -1,0 +1,77 @@
+name: Publishing Health Audit
+
+on:
+  schedule:
+    - cron: "0 8 * * 1" # Monday 08:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run audit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/audit.mjs
+
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/latest.md reports/latest.json
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "chore: update publishing health report [skip ci]"
+          git push
+
+      - name: Update pinned issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="${{ github.repository }}"
+          TITLE="Publishing Health"
+
+          # Read counts from JSON
+          RED=$(node -e "const d=JSON.parse(require('fs').readFileSync('reports/latest.json','utf8')); process.stdout.write(String(d.counts.RED))")
+          YELLOW=$(node -e "const d=JSON.parse(require('fs').readFileSync('reports/latest.json','utf8')); process.stdout.write(String(d.counts.YELLOW))")
+          GRAY=$(node -e "const d=JSON.parse(require('fs').readFileSync('reports/latest.json','utf8')); process.stdout.write(String(d.counts.GRAY))")
+          GENERATED=$(node -e "const d=JSON.parse(require('fs').readFileSync('reports/latest.json','utf8')); process.stdout.write(d.generated)")
+
+          # Build issue body from the report top section
+          BODY=$(cat <<EOF
+          ## Publishing Health — ${GENERATED}
+
+          **RED: ${RED}** | **YELLOW: ${YELLOW}** | **GRAY: ${GRAY}**
+
+          $(head -20 reports/latest.md | tail -15)
+
+          ---
+          [Full report](https://github.com/${REPO}/blob/main/reports/latest.md) | [JSON](https://github.com/${REPO}/blob/main/reports/latest.json)
+
+          _Updated by [audit-weekly](https://github.com/${REPO}/actions/workflows/audit-weekly.yml)_
+          EOF
+          )
+
+          # Find existing issue
+          ISSUE_NUM=$(gh issue list --repo "$REPO" --search "in:title ${TITLE}" --state open --json number --jq '.[0].number // empty')
+
+          if [ -n "$ISSUE_NUM" ]; then
+            gh issue edit "$ISSUE_NUM" --repo "$REPO" --body "$BODY"
+            echo "Updated issue #${ISSUE_NUM}"
+          else
+            gh issue create --repo "$REPO" --title "$TITLE" --body "$BODY" --pin
+            echo "Created and pinned new issue"
+          fi

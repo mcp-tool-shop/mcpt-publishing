@@ -1,0 +1,303 @@
+{
+  "npm": [
+    {
+      "name": "@mcptoolshop/mcpt",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/mcpt",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/mcp-tool-registry",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/mcp-tool-registry",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/websketch",
+      "version": "0.3.0",
+      "repo": "mcp-tool-shop-org/websketch-cli",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/websketch-ir",
+      "version": "0.3.1",
+      "repo": "mcp-tool-shop-org/websketch-ir",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/voice-soundboard-mcp",
+      "version": "0.1.2",
+      "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/voice-soundboard-core",
+      "version": "0.1.2",
+      "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/consensus-os",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/ConsensusOS",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/synthesis",
+      "version": "0.1.0",
+      "repo": "mcp-tool-shop-org/synthesis",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/prov-engine-js",
+      "version": "0.2.1",
+      "repo": "mcp-tool-shop-org/prov-engine-js",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/pathway",
+      "version": "0.2.2",
+      "repo": "mcp-tool-shop-org/pathway",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/file-forge",
+      "version": "0.1.0",
+      "repo": "mcp-tool-shop-org/mcp-file-forge",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/accessibility-suite",
+      "version": "0.1.0",
+      "repo": "mcp-tool-shop-org/accessibility-suite",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/a11y-ci",
+      "version": "0.2.2",
+      "repo": "mcp-tool-shop-org/accessibility-suite",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/a11y-evidence-engine",
+      "version": "0.3.1",
+      "repo": "mcp-tool-shop-org/a11y-evidence-engine",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/a11y-mcp-tools",
+      "version": "0.4.1",
+      "repo": "mcp-tool-shop-org/a11y-mcp-tools",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/venvkit",
+      "version": "0.2.1",
+      "repo": "mcp-tool-shop-org/venvkit",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/voice-engine-dsp",
+      "version": "0.0.2",
+      "repo": "mcp-tool-shop-org/mcp-voice-engine",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/physics-svg",
+      "version": "0.1.1",
+      "repo": "mcp-tool-shop-org/siege-kit",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/promo-kit",
+      "version": "0.1.3",
+      "repo": "mcp-tool-shop/mcp-tool-shop",
+      "audience": "internal",
+      "findings": []
+    }
+  ],
+  "nuget": [
+    {
+      "name": "Soundboard.Client",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/soundboard-maui",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-project-url",
+          "msg": "Soundboard.Client has no projectUrl on NuGet"
+        },
+        {
+          "severity": "YELLOW",
+          "code": "missing-icon",
+          "msg": "Soundboard.Client (front-door) has no icon"
+        }
+      ]
+    },
+    {
+      "name": "Soundboard.Maui.Audio",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/soundboard-maui",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "InControl.Core",
+      "version": "1.2.0",
+      "repo": "mcp-tool-shop-org/InControl-Desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "InControl.Inference",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/InControl-Desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "Attestia.Core",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/Attestia-Desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "Attestia.Client",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/Attestia-Desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "Attestia.Sidecar",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/Attestia-Desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "Gov.Protocol",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/build-governor",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "Gov.Common",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/build-governor",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CursorAssist.Canon",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/CursorAssist",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CursorAssist.Trace",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/CursorAssist",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CursorAssist.Engine",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/CursorAssist",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CursorAssist.Policy",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/CursorAssist",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "MouseTrainer.Domain",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/MouseTrainer",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "MouseTrainer.Simulation",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/MouseTrainer",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "MouseTrainer.Audio",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/MouseTrainer",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "RunForgeDesktop.Core",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/runforge-desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CodeClone.Domain",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/CodeClone-Desktop",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "LinuxDevTyper.Core",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/linux-dev-typer",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "DevOpTyper.Content",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/meta-content-system",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "VortexKit",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/ScalarScope-Desktop",
+      "audience": "internal",
+      "findings": []
+    }
+  ],
+  "generated": "2026-02-17T07:38:16.985Z",
+  "counts": {
+    "RED": 0,
+    "YELLOW": 2,
+    "GRAY": 0
+  }
+}

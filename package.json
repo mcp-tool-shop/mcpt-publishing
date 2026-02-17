@@ -1,0 +1,13 @@
+{
+  "name": "mcpt-publishing",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit": "node scripts/audit.mjs",
+    "audit:json": "node scripts/audit.mjs --json"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
