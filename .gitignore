@@ -1,0 +1,6 @@
+node_modules/
+NUL
+output/
+*.tgz
+reports/baseline.*
+reports/refactored.*

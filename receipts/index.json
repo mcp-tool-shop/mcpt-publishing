@@ -1,0 +1,13 @@
+{
+  "latestAudit": {
+    "date": "2026-02-17T11:53:52.307Z",
+    "counts": {
+      "RED": 0,
+      "YELLOW": 0,
+      "GRAY": 0,
+      "INFO": 1
+    },
+    "totalPackages": 40
+  },
+  "publish": {}
+}

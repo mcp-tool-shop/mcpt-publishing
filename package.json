@@ -1,13 +1,50 @@
 {
-  "name": "mcpt-publishing",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@mcptoolshop/mcpt-publishing",
+  "version": "1.0.0",
+  "description": "Publishing health auditor and receipt factory plugin for MCP Tool Shop packages.",
   "type": "module",
+  "bin": {
+    "mcpt-publishing": "./bin/mcpt-publishing.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "scripts/lib/",
+    "schemas/",
+    "profiles/manifest.json",
+    "profiles/example.json",
+    "logo.png",
+    "docs/CONTRACT.md",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "audit": "node scripts/audit.mjs",
-    "audit:json": "node scripts/audit.mjs --json"
+    "audit": "node bin/mcpt-publishing.mjs audit",
+    "audit:json": "node bin/mcpt-publishing.mjs audit --json",
+    "test": "node scripts/test-providers.mjs"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {},
+  "keywords": [
+    "mcp",
+    "publishing",
+    "audit",
+    "receipts",
+    "registry",
+    "npm",
+    "nuget",
+    "drift-detection"
+  ],
+  "author": "mcp-tool-shop",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcp-tool-shop/mcpt-publishing.git"
+  },
+  "homepage": "https://github.com/mcp-tool-shop/mcpt-publishing#readme",
+  "bugs": {
+    "url": "https://github.com/mcp-tool-shop/mcpt-publishing/issues"
   }
 }

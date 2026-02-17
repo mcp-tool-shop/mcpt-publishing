@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcp-tool-shop/mcpt-publishing/schemas/audit-receipt.schema.json",
+  "title": "Audit Receipt",
+  "description": "Record of a publishing health audit run.",
+  "type": "object",
+  "required": ["schemaVersion", "type", "timestamp", "counts", "totalPackages"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "type": {
+      "type": "string",
+      "const": "audit"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the audit ran"
+    },
+    "counts": {
+      "type": "object",
+      "required": ["RED", "YELLOW", "GRAY", "INFO"],
+      "additionalProperties": false,
+      "properties": {
+        "RED": { "type": "integer", "minimum": 0 },
+        "YELLOW": { "type": "integer", "minimum": 0 },
+        "GRAY": { "type": "integer", "minimum": 0 },
+        "INFO": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "ecosystems": {
+      "type": "object",
+      "description": "Package count per ecosystem audited",
+      "additionalProperties": { "type": "integer" }
+    },
+    "totalPackages": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reportFiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "json": { "type": "string" },
+        "markdown": { "type": "string" }
+      }
+    }
+  }
+}

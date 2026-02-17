@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcp-tool-shop/mcpt-publishing/schemas/publishing-config.schema.json",
+  "title": "Publishing Config",
+  "description": "Configuration for the mcpt-publishing CLI.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "profilesDir": {
+      "type": "string",
+      "default": "profiles",
+      "description": "Path to profiles directory (relative to config file or absolute)"
+    },
+    "receiptsDir": {
+      "type": "string",
+      "default": "receipts",
+      "description": "Path to receipts output directory"
+    },
+    "reportsDir": {
+      "type": "string",
+      "default": "reports",
+      "description": "Path to reports output directory"
+    },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "updateIssue": {
+          "type": "boolean",
+          "default": true,
+          "description": "Update the pinned Publishing Health issue after audit"
+        },
+        "attachReceipts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Attach receipt JSON files to GitHub Releases"
+        }
+      }
+    },
+    "enabledProviders": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Allowlist of provider names. Empty array = all providers enabled."
+    }
+  }
+}

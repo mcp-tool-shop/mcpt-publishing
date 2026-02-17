@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "type": "audit",
+  "timestamp": "2026-02-17T11:53:52.307Z",
+  "counts": {
+    "RED": 0,
+    "YELLOW": 0,
+    "GRAY": 0,
+    "INFO": 1
+  },
+  "ecosystems": {
+    "npm": 19,
+    "nuget": 21,
+    "pypi": 0,
+    "ghcr": 0
+  },
+  "totalPackages": 40,
+  "reportFiles": {
+    "json": "reports/latest.json",
+    "markdown": "reports/latest.md"
+  }
+}
