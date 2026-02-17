@@ -1,0 +1,23 @@
+{
+  "$comment": "Example profile showing one NuGet + one npm entry",
+  "repo": {
+    "owner": "mcp-tool-shop-org",
+    "name": "soundboard-maui"
+  },
+  "packages": [
+    {
+      "ecosystem": "nuget",
+      "name": "Soundboard.Client",
+      "audience": "front-door",
+      "versionPolicy": { "truth": "registry", "tagPrefix": "v" },
+      "registryUrl": "https://www.nuget.org/packages/Soundboard.Client"
+    },
+    {
+      "ecosystem": "nuget",
+      "name": "Soundboard.Maui.Audio",
+      "audience": "internal",
+      "versionPolicy": { "truth": "registry", "tagPrefix": "v" },
+      "registryUrl": "https://www.nuget.org/packages/Soundboard.Maui.Audio"
+    }
+  ]
+}

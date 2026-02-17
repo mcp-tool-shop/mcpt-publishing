@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcp-tool-shop/mcpt-publishing/schemas/profile.schema.json",
+  "title": "Publishing Profile",
+  "description": "Declares what a repo publishes, where, and how.",
+  "type": "object",
+  "required": ["repo", "packages"],
+  "properties": {
+    "repo": {
+      "type": "object",
+      "required": ["owner", "name"],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "GitHub org or user (e.g. mcp-tool-shop-org)"
+        },
+        "name": {
+          "type": "string",
+          "description": "GitHub repo name"
+        }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["ecosystem", "name", "audience"],
+        "properties": {
+          "ecosystem": {
+            "type": "string",
+            "enum": ["npm", "nuget"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Package name/ID as it appears on the registry"
+          },
+          "audience": {
+            "type": "string",
+            "enum": ["front-door", "internal"],
+            "description": "front-door = meant for strangers; internal = dependency/component"
+          },
+          "versionPolicy": {
+            "type": "object",
+            "properties": {
+              "truth": {
+                "type": "string",
+                "const": "registry",
+                "description": "Always registry — published versions are immutable reality"
+              },
+              "tagPrefix": {
+                "type": "string",
+                "default": "v",
+                "description": "Git tag prefix (e.g. v for v1.0.0)"
+              }
+            }
+          },
+          "registryUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Direct link to the registry page"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Anything unusual about this package"
+          }
+        }
+      }
+    }
+  }
+}
