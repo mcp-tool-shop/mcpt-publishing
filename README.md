@@ -112,11 +112,12 @@ npx mcpt-publishing apply --batch
 
 ### `mcpt-publishing publish`
 
-Publishes to a target registry using tokens/secrets. *(coming soon)*
+Publishes packages to registries and generates immutable receipts.
 
 ```bash
-npx mcpt-publishing publish --repo mcp-tool-shop-org/soundboard-maui --target npm
-npx mcpt-publishing publish --repo mcp-tool-shop-org/Soundboard.Client --target nuget
+npx mcpt-publishing publish --repo mcp-tool-shop-org/mcpt --target npm
+npx mcpt-publishing publish --repo mcp-tool-shop-org/soundboard-maui --target nuget --cwd /path/to/repo
+npx mcpt-publishing publish --target npm --dry-run
 ```
 
 ### `mcpt-publishing providers`
@@ -129,10 +130,11 @@ npx mcpt-publishing providers
 
 ### `mcpt-publishing verify-receipt`
 
-Validates receipts (schema + immutability). *(coming soon)*
+Validates receipt files against schema and computes integrity hashes.
 
 ```bash
-npx mcpt-publishing verify-receipt receipts/publish/...
+npx mcpt-publishing verify-receipt receipts/audit/2026-02-17.json
+npx mcpt-publishing verify-receipt receipts/publish/mcp-tool-shop-org--mcpt/npm/1.0.1.json --json
 ```
 
 ---
@@ -185,6 +187,18 @@ These are only needed when you publish or call APIs that require auth.
 | NuGet | `NUGET_API_KEY` | Works in CI or locally |
 | GitHub | `GITHUB_TOKEN` / `GH_TOKEN` | For releases/issues/ghcr |
 | PyPI | `PYPI_TOKEN` | If you enable PyPI publishing |
+
+---
+
+## Exit codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `2` | RED-severity drift found (audit) |
+| `3` | Configuration or schema error |
+| `4` | Missing credentials for a requested operation |
+| `5` | One or more publishes failed |
 
 ---
 

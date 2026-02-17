@@ -1,6 +1,6 @@
 {
   "name": "@mcptoolshop/mcpt-publishing",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Publishing health auditor and receipt factory plugin for MCP Tool Shop packages.",
   "type": "module",
   "bin": {
@@ -15,6 +15,7 @@
     "profiles/example.json",
     "logo.png",
     "docs/CONTRACT.md",
+    "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],

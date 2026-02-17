@@ -1,12 +1,16 @@
 /**
- * NuGet provider — extracted from audit.mjs.
+ * NuGet provider — audit + publish.
  *
- * Fetches metadata via NuGet search API + flat-container,
- * detects indexing lag, and classifies drift against git state.
+ * Audit: fetches metadata via NuGet search API + flat-container,
+ *        detects indexing lag, and classifies drift against git state.
+ * Publish: packs .nupkg, computes SHA-256, pushes to nuget.org.
  */
 
 import { execSync } from "node:child_process";
+import { readdirSync, rmSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { Provider } from "../provider.mjs";
+import { exec, hashFile } from "../shell.mjs";
 
 export default class NuGetProvider extends Provider {
   get name() { return "nuget"; }
@@ -27,6 +31,85 @@ export default class NuGetProvider extends Provider {
 
     const findings = this.#classify(entry, meta, tags, releases, flatVersions);
     return { version, findings };
+  }
+
+  /**
+   * Publish a NuGet package.
+   *
+   * @param {object} entry - { name, repo, audience, ecosystem }
+   * @param {object} opts  - { dryRun: boolean, cwd: string }
+   * @returns {Promise<{ success: boolean, version: string, artifacts: Array, error?: string }>}
+   */
+  async publish(entry, opts = {}) {
+    const cwd = opts.cwd ?? process.cwd();
+
+    // Check credentials (skip in dry-run — dotnet pack doesn't need auth)
+    if (!process.env.NUGET_API_KEY && !opts.dryRun) {
+      return { success: false, version: "", artifacts: [], error: "NUGET_API_KEY environment variable is not set" };
+    }
+
+    const outputDir = join(cwd, "nupkg-output");
+
+    // dotnet pack
+    const packResult = exec("dotnet pack -c Release -o nupkg-output", { cwd });
+    if (packResult.exitCode !== 0) {
+      return { success: false, version: "", artifacts: [], error: `dotnet pack failed: ${packResult.stderr}` };
+    }
+
+    // Find the .nupkg matching the package name
+    if (!existsSync(outputDir)) {
+      return { success: false, version: "", artifacts: [], error: "nupkg-output directory not created by dotnet pack" };
+    }
+
+    const nupkgFiles = readdirSync(outputDir).filter(f => f.endsWith(".nupkg") && !f.endsWith(".symbols.nupkg"));
+    const targetNupkg = nupkgFiles.find(f => f.toLowerCase().startsWith(entry.name.toLowerCase() + "."));
+
+    if (!targetNupkg) {
+      // Clean up
+      try { rmSync(outputDir, { recursive: true }); } catch { /* ignore */ }
+      return {
+        success: false, version: "", artifacts: [],
+        error: `No .nupkg found matching "${entry.name}" in nupkg-output/ (found: ${nupkgFiles.join(", ") || "none"})`,
+      };
+    }
+
+    // Extract version from filename: PackageName.1.2.3.nupkg
+    const nupkgBasename = targetNupkg.replace(/\.nupkg$/, "");
+    const version = nupkgBasename.slice(entry.name.length + 1); // +1 for the dot
+
+    if (!version) {
+      try { rmSync(outputDir, { recursive: true }); } catch { /* ignore */ }
+      return { success: false, version: "", artifacts: [], error: `Could not parse version from ${targetNupkg}` };
+    }
+
+    // Compute SHA-256
+    const nupkgPath = join(outputDir, targetNupkg);
+    const { sha256, size } = hashFile(nupkgPath);
+
+    // Push (or dry-run)
+    if (!opts.dryRun) {
+      const pushResult = exec(
+        `dotnet nuget push "${nupkgPath}" --api-key "${process.env.NUGET_API_KEY}" --source https://api.nuget.org/v3/index.json --skip-duplicate`,
+        { cwd }
+      );
+      if (pushResult.exitCode !== 0) {
+        try { rmSync(outputDir, { recursive: true }); } catch { /* ignore */ }
+        return { success: false, version, artifacts: [], error: `dotnet nuget push failed: ${pushResult.stderr}` };
+      }
+    }
+
+    // Clean up
+    try { rmSync(outputDir, { recursive: true }); } catch { /* ignore */ }
+
+    // Build artifact metadata
+    const artifact = {
+      name: targetNupkg,
+      sha256,
+      size,
+      url: `https://www.nuget.org/packages/${entry.name}/${version}`,
+    };
+
+    return { success: true, version, artifacts: [artifact] };
   }
 
   // ─── Private ───────────────────────────────────────────────────────────────

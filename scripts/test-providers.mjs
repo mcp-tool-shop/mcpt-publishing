@@ -16,7 +16,7 @@ import { loadProviders, matchProviders } from "./lib/registry.mjs";
 import { validate, write, read } from "./lib/receipt-writer.mjs";
 import { existsSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -174,6 +174,86 @@ try {
     rmSync(receiptDir, { recursive: true });
   }
 }
+
+// ─── Shell Utilities ─────────────────────────────────────────────────────────
+
+console.log("\n=== Shell Utilities ===\n");
+
+const { exec: shellExec, hashFile, getCommitSha } = await import(
+  pathToFileURL(join(__dirname, "lib", "shell.mjs")).href
+);
+
+// exec — success case
+{
+  const result = shellExec("node --version");
+  assert(result.exitCode === 0, "exec: node --version exits 0");
+  assert(result.stdout.startsWith("v"), "exec: stdout starts with 'v'");
+}
+
+// exec — failure case (no throw)
+{
+  const result = shellExec("node -e \"process.exit(42)\"");
+  assert(result.exitCode === 42, "exec: non-zero exit captured without throwing");
+}
+
+// hashFile
+{
+  const testFile = join(__dirname, "..", "package.json");
+  const { sha256, size } = hashFile(testFile);
+  assert(typeof sha256 === "string" && sha256.length === 64, "hashFile: returns 64-char hex sha256");
+  assert(typeof size === "number" && size > 0, "hashFile: returns positive size");
+}
+
+// getCommitSha
+{
+  const sha = getCommitSha();
+  assert(/^[0-9a-f]{40}$/.test(sha), "getCommitSha: returns 40 lowercase hex chars");
+}
+
+// ─── Verify-Receipt Command ─────────────────────────────────────────────────
+
+console.log("\n=== Verify-Receipt Command ===\n");
+
+const { execute: verifyExecute } = await import(
+  pathToFileURL(join(__dirname, "..", "src", "commands", "verify-receipt.mjs")).href
+);
+
+// Verify existing audit receipt
+{
+  const auditReceipt = join(__dirname, "..", "receipts", "audit", "2026-02-17.json");
+  if (existsSync(auditReceipt)) {
+    const code = await verifyExecute({ _positionals: [auditReceipt], json: true });
+    assert(code === 0, "verify-receipt: audit receipt validates (exit 0)");
+  } else {
+    console.log("  SKIP  No audit receipt found to verify");
+  }
+}
+
+// Verify missing file returns error
+{
+  const code = await verifyExecute({ _positionals: ["/nonexistent/receipt.json"], json: true });
+  assert(code !== 0, "verify-receipt: missing file returns non-zero");
+}
+
+// Verify no path returns error
+{
+  const code = await verifyExecute({ _positionals: [] });
+  assert(code !== 0, "verify-receipt: no path returns non-zero");
+}
+
+// ─── Exit Codes ─────────────────────────────────────────────────────────────
+
+console.log("\n=== Exit Codes ===\n");
+
+const { EXIT } = await import(
+  pathToFileURL(join(__dirname, "..", "src", "cli", "exit-codes.mjs")).href
+);
+
+assert(EXIT.SUCCESS === 0, "EXIT.SUCCESS is 0");
+assert(EXIT.DRIFT_FOUND === 2, "EXIT.DRIFT_FOUND is 2");
+assert(EXIT.CONFIG_ERROR === 3, "EXIT.CONFIG_ERROR is 3");
+assert(EXIT.MISSING_CREDENTIALS === 4, "EXIT.MISSING_CREDENTIALS is 4");
+assert(EXIT.PUBLISH_FAILURE === 5, "EXIT.PUBLISH_FAILURE is 5");
 
 // ─── Summary ─────────────────────────────────────────────────────────────────
 
