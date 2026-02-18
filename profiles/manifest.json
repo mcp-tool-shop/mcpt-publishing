@@ -44,6 +44,20 @@
     { "name": "DevOpTyper.Content", "repo": "mcp-tool-shop-org/meta-content-system", "audience": "internal" },
     { "name": "VortexKit", "repo": "mcp-tool-shop-org/ScalarScope-Desktop", "audience": "internal" }
   ],
-  "pypi": [],
+  "pypi": [
+    { "name": "tool-compass", "repo": "mcp-tool-shop-org/tool-compass", "audience": "front-door" },
+    { "name": "voice-soundboard", "repo": "mcp-tool-shop-org/voice-soundboard", "audience": "front-door" },
+    { "name": "voice-soundboard-plugin", "repo": "mcp-tool-shop-org/soundboard-plugin", "audience": "front-door" }
+  ],
+  "smithery": [
+    { "name": "mcp-tool-shop/mcp-file-forge", "repo": "mcp-tool-shop-org/mcp-file-forge", "url": "https://smithery.ai/servers/mcp-tool-shop/mcp-file-forge", "tools": 17 },
+    { "name": "mcp-tool-shop/voice-soundboard", "repo": "mcp-tool-shop-org/mcp-voice-soundboard", "url": "https://smithery.ai/servers/mcp-tool-shop/voice-soundboard", "tools": 5 },
+    { "name": "mcp-tool-shop/tool-compass", "repo": "mcp-tool-shop-org/tool-compass", "url": "https://smithery.ai/servers/mcp-tool-shop/tool-compass", "tools": 9 }
+  ],
+  "flyio": [
+    { "app": "mcp-file-forge", "repo": "mcp-tool-shop-org/mcp-file-forge", "url": "https://mcp-file-forge.fly.dev" },
+    { "app": "voice-soundboard-mcp", "repo": "mcp-tool-shop-org/mcp-voice-soundboard", "url": "https://voice-soundboard-mcp.fly.dev" },
+    { "app": "tool-compass-gateway", "repo": "mcp-tool-shop-org/tool-compass", "url": "https://tool-compass-gateway.fly.dev" }
+  ],
   "ghcr": []
 }
