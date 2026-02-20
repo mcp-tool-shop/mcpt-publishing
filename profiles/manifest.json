@@ -21,7 +21,7 @@
     { "name": "@mcptoolshop/physics-svg", "repo": "mcp-tool-shop-org/siege-kit", "audience": "internal" },
     { "name": "@mcptoolshop/promo-kit", "repo": "mcp-tool-shop/mcp-tool-shop", "audience": "internal" },
     { "name": "@mcptoolshop/ai-music-sheets", "repo": "mcp-tool-shop-org/ai-music-sheets", "audience": "front-door" },
-    { "name": "@mcptoolshop/pianai", "repo": "mcp-tool-shop-org/pianoai", "audience": "front-door" }
+    { "name": "@mcptoolshop/pianoai", "repo": "mcp-tool-shop-org/pianoai", "audience": "front-door" }
   ],
   "nuget": [
     { "name": "Soundboard.Client", "repo": "mcp-tool-shop-org/soundboard-maui", "audience": "front-door" },
