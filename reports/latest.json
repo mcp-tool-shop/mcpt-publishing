@@ -2,63 +2,136 @@
   "npm": [
     {
       "name": "@mcptoolshop/mcpt",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "repo": "mcp-tool-shop-org/mcpt",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/mcpt tag v1.1.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/mcp-tool-registry",
-      "version": "1.0.1",
+      "version": "1.1.4",
       "repo": "mcp-tool-shop-org/mcp-tool-registry",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/mcp-tool-registry tag v1.1.4 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/websketch",
-      "version": "0.3.0",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/websketch-cli",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/websketch tag v1.0.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/websketch-ir",
-      "version": "0.3.1",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/websketch-ir",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/websketch-ir tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/websketch-demo",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/websketch-demo",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/websketch-demo tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/websketch-mcp",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/websketch-mcp",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/websketch-mcp tag v1.0.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/voice-soundboard-mcp",
-      "version": "0.1.2",
+      "version": "1.0.1",
       "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/voice-soundboard-mcp tag v1.0.1 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/voice-soundboard-core",
-      "version": "0.1.2",
+      "version": "1.0.1",
       "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "@mcptoolshop/consensus-os",
-      "version": "1.0.0",
+      "version": "1.0.5",
       "repo": "mcp-tool-shop-org/ConsensusOS",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/consensus-os tag v1.0.5 has no GitHub Release"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-keywords",
+          "msg": "@mcptoolshop/consensus-os has no keywords"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/synthesis",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/synthesis",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/synthesis tag v1.0.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/prov-engine-js",
-      "version": "0.2.1",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/prov-engine-js",
       "audience": "internal",
       "findings": []
@@ -72,49 +145,67 @@
     },
     {
       "name": "@mcptoolshop/file-forge",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/mcp-file-forge",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/file-forge tag v1.0.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/accessibility-suite",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/accessibility-suite",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/accessibility-suite tag v1.0.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/a11y-ci",
       "version": "0.2.2",
-      "repo": "mcp-tool-shop-org/accessibility-suite",
+      "repo": "mcp-tool-shop-org/a11y-ci",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "@mcptoolshop/a11y-evidence-engine",
-      "version": "0.3.1",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/a11y-evidence-engine",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "@mcptoolshop/a11y-mcp-tools",
-      "version": "0.4.1",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/a11y-mcp-tools",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "@mcptoolshop/venvkit",
-      "version": "0.2.1",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/venvkit",
       "audience": "front-door",
-      "findings": []
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/venvkit tag v1.0.0 has no GitHub Release"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/voice-engine-dsp",
-      "version": "0.0.2",
+      "version": "1.0.0",
       "repo": "mcp-tool-shop-org/mcp-voice-engine",
       "audience": "internal",
       "findings": []
@@ -124,12 +215,317 @@
       "version": "0.1.1",
       "repo": "mcp-tool-shop-org/siege-kit",
       "audience": "internal",
-      "findings": []
+      "findings": [
+        {
+          "severity": "GRAY",
+          "code": "missing-keywords",
+          "msg": "@mcptoolshop/physics-svg has no keywords"
+        }
+      ]
     },
     {
       "name": "@mcptoolshop/promo-kit",
-      "version": "0.1.3",
+      "version": "0.1.5",
       "repo": "mcp-tool-shop/mcp-tool-shop",
+      "audience": "internal",
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "published-not-tagged",
+          "msg": "@mcptoolshop/promo-kit@0.1.5 — no git tag v0.1.5"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/ai-music-sheets",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/ai-music-sheets",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/ai-music-sheets tag v1.0.1 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/ai-jam-sessions",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/ai-jam-sessions",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/backprop",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/backprop",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/backprop tag v1.0.0 has no GitHub Release"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-keywords",
+          "msg": "@mcptoolshop/backprop has no keywords"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/brand",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/brand",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/civility-kernel",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/civility-kernel",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/civility-kernel tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/claude-guardian",
+      "version": "1.1.2",
+      "repo": "mcp-tool-shop-org/claude-guardian",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/claude-guardian tag v1.1.2 has no GitHub Release"
+        },
+        {
+          "severity": "RED",
+          "code": "wrong-repo-url",
+          "msg": "@mcptoolshop/claude-guardian repo URL \"\" doesn't match expected mcp-tool-shop-org/claude-guardian"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "@mcptoolshop/claude-guardian has no homepage"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-bugs-url",
+          "msg": "@mcptoolshop/claude-guardian has no bugs URL"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/claude-session-copilot",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/claude-session-copilot",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/claude-session-copilot tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/claude-sfx",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/claude-sfx",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/claude-sfx tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/clearance-opinion-engine",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/clearance-opinion-engine",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/clearance-opinion-engine tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/game-dev-mcp",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/game-dev-mcp",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/game-dev-mcp tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/mcp-aside",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/mcp-aside",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/mcp-aside tag v1.0.0 has no GitHub Release"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-keywords",
+          "msg": "@mcptoolshop/mcp-aside has no keywords"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/nameops",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/nameops",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/nameops tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/polyglot-mcp",
+      "version": "1.3.0",
+      "repo": "mcp-tool-shop-org/polyglot-mcp",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/polyglot-mcp tag v1.3.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/registrum",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/Registrum",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/registrum tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/registry-stats",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/registry-stats",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/registry-stats tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/repo-crawler-mcp",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/repo-crawler-mcp",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/repo-crawler-mcp tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/shipcheck",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/shipcheck",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/site-theme",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/site-theme",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/throttleai",
+      "version": "1.1.2",
+      "repo": "mcp-tool-shop-org/ThrottleAI",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/vocal-synth-engine",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/vocal-synth-engine",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "@mcptoolshop/vocal-synth-engine tag v1.0.1 has no GitHub Release"
+        },
+        {
+          "severity": "RED",
+          "code": "bad-description",
+          "msg": "@mcptoolshop/vocal-synth-engine has missing/HTML description"
+        },
+        {
+          "severity": "GRAY",
+          "code": "missing-keywords",
+          "msg": "@mcptoolshop/vocal-synth-engine has no keywords"
+        }
+      ]
+    },
+    {
+      "name": "@mcptoolshop/logo-presets",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop/mcpt-logo-presets",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/logo-studio",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop/mcpt-logo-studio",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/mcpt-publishing",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop/mcpt-publishing",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "@mcptoolshop/mcpt-link-fresh",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop/mcpt-link-fresh",
       "audience": "internal",
       "findings": []
     }
@@ -137,166 +533,554 @@
   "nuget": [
     {
       "name": "Soundboard.Client",
-      "version": "1.2.0",
+      "version": "1.2.2",
       "repo": "mcp-tool-shop-org/soundboard-maui",
       "audience": "front-door",
       "findings": [
         {
           "severity": "INFO",
           "code": "pending-index",
-          "msg": "Soundboard.Client v1.2.0 published but search API still shows v1.0.0 — retry in 60-120 min"
+          "msg": "Soundboard.Client v1.2.2 published but search API still shows v1.0.0 — retry in 60-120 min"
         }
       ]
     },
     {
       "name": "Soundboard.Maui.Audio",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/soundboard-maui",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "InControl.Core",
-      "version": "1.2.0",
+      "version": "1.2.2",
       "repo": "mcp-tool-shop-org/InControl-Desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "InControl.Inference",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/InControl-Desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "Attestia.Core",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/Attestia-Desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "Attestia.Client",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/Attestia-Desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "Attestia.Sidecar",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/Attestia-Desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "Gov.Protocol",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/build-governor",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "Gov.Common",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/build-governor",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "CursorAssist.Canon",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/CursorAssist",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "CursorAssist.Trace",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/CursorAssist",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "CursorAssist.Engine",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/CursorAssist",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "CursorAssist.Policy",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/CursorAssist",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "MouseTrainer.Domain",
-      "version": "1.0.0",
+      "version": "1.1.3",
       "repo": "mcp-tool-shop-org/MouseTrainer",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "MouseTrainer.Simulation",
-      "version": "1.0.0",
+      "version": "1.1.3",
       "repo": "mcp-tool-shop-org/MouseTrainer",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "MouseTrainer.Audio",
-      "version": "1.0.0",
+      "version": "1.1.3",
       "repo": "mcp-tool-shop-org/MouseTrainer",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "RunForgeDesktop.Core",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/runforge-desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "CodeClone.Domain",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/CodeClone-Desktop",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "LinuxDevTyper.Core",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/linux-dev-typer",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "DevOpTyper.Content",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/meta-content-system",
       "audience": "internal",
       "findings": []
     },
     {
       "name": "VortexKit",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "repo": "mcp-tool-shop-org/ScalarScope-Desktop",
       "audience": "internal",
       "findings": []
+    },
+    {
+      "name": "CodeTeam",
+      "version": "1.0.2",
+      "repo": "mcp-tool-shop-org/codeteam-suite",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "missing-icon",
+          "msg": "CodeTeam (front-door) has no icon"
+        }
+      ]
+    },
+    {
+      "name": "CodeTeam.Core",
+      "version": "1.0.2",
+      "repo": "mcp-tool-shop-org/codeteam-suite",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CodeTeam.Crypto",
+      "version": "1.0.2",
+      "repo": "mcp-tool-shop-org/codeteam-suite",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "CodeTeam.Packaging",
+      "version": "1.0.2",
+      "repo": "mcp-tool-shop-org/codeteam-suite",
+      "audience": "internal",
+      "findings": []
+    },
+    {
+      "name": "ClaimLedger",
+      "version": "1.0.2",
+      "repo": "mcp-tool-shop-org/ClaimLedger",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "CreatorLedger",
+      "version": "1.1.2",
+      "repo": "mcp-tool-shop-org/CreatorLedger",
+      "audience": "front-door",
+      "findings": []
     }
   ],
-  "pypi": [],
+  "pypi": [
+    {
+      "name": "tool-compass",
+      "version": "2.0.6",
+      "repo": "mcp-tool-shop-org/tool-compass",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "voice-soundboard",
+      "version": "2.6.3",
+      "repo": "mcp-tool-shop-org/voice-soundboard",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "voice-soundboard tag v2.6.3 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "voice-soundboard-plugin",
+      "version": "1.1.2",
+      "repo": "mcp-tool-shop-org/soundboard-plugin",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "voice-soundboard-plugin tag v1.1.2 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "headless-wheel-builder",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/headless-wheel-builder",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "headless-wheel-builder tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "a11y-lint",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/a11y-lint",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "a11y-lint tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "ally-demo-python",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/ally-demo-python",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "ally-demo-python tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "aspire-ai",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/aspire-ai",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "aspire-ai tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "codebatch",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/code-batch",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "GRAY",
+          "code": "missing-homepage",
+          "msg": "codebatch has no homepage on PyPI"
+        }
+      ]
+    },
+    {
+      "name": "code-covered",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/code-covered",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "code-covered tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "nexus-control",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/nexus-control",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "nexus-control tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "a11y-ci",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/a11y-ci",
+      "audience": "internal",
+      "findings": [
+        {
+          "severity": "RED",
+          "code": "published-not-tagged",
+          "msg": "a11y-ci@1.0.0 — no git tag v1.0.0"
+        }
+      ]
+    },
+    {
+      "name": "mcp-stress-test",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/mcp-stress-test",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "mcp-stress-test tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "file-compass",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/file-compass",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "flexiflow",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/flexiflow",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "flexiflow tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "integradio",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/integradio",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "integradio tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "xrpl-witness",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/witness",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "zip-meta-map",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/zip-meta-map",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "zip-meta-map tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "mcpt-pathway",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/pathway",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "mcpt-pathway tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "payroll-engine",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/payroll-engine",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "payroll-engine tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "tool-scan",
+      "version": "1.0.5",
+      "repo": "mcp-tool-shop-org/tool-scan",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "tool-scan tag v1.0.5 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "codeclone-cli",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/codeclone-suite",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "codeclone-cli tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "brain-dev",
+      "version": "1.0.3",
+      "repo": "mcp-tool-shop-org/brain-dev",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "brain-dev tag v1.0.3 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "cwm-mcp",
+      "version": "1.0.0",
+      "repo": "mcp-tool-shop-org/context-window-manager",
+      "audience": "front-door",
+      "findings": [
+        {
+          "severity": "YELLOW",
+          "code": "tagged-not-released",
+          "msg": "cwm-mcp tag v1.0.0 has no GitHub Release"
+        }
+      ]
+    },
+    {
+      "name": "backpropagate",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/backpropagate",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "mcp-bouncer",
+      "version": "1.0.1",
+      "repo": "mcp-tool-shop-org/mcp-bouncer",
+      "audience": "front-door",
+      "findings": []
+    },
+    {
+      "name": "nexus-router",
+      "version": "1.1.1",
+      "repo": "mcp-tool-shop-org/nexus-router",
+      "audience": "front-door",
+      "findings": []
+    }
+  ],
+  "smithery": [
+    {
+      "name": "mcp-tool-shop/mcp-file-forge",
+      "version": "?",
+      "repo": "mcp-tool-shop-org/mcp-file-forge",
+      "findings": []
+    },
+    {
+      "name": "mcp-tool-shop/voice-soundboard",
+      "version": "?",
+      "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
+      "findings": []
+    },
+    {
+      "name": "mcp-tool-shop/tool-compass",
+      "version": "?",
+      "repo": "mcp-tool-shop-org/tool-compass",
+      "findings": []
+    }
+  ],
+  "flyio": [
+    {
+      "version": "?",
+      "repo": "mcp-tool-shop-org/mcp-file-forge",
+      "findings": []
+    },
+    {
+      "version": "?",
+      "repo": "mcp-tool-shop-org/mcp-voice-soundboard",
+      "findings": []
+    },
+    {
+      "version": "?",
+      "repo": "mcp-tool-shop-org/tool-compass",
+      "findings": []
+    }
+  ],
   "ghcr": [],
-  "generated": "2026-02-17T11:32:34.960Z",
+  "generated": "2026-02-28T01:37:02.993Z",
   "counts": {
-    "RED": 0,
-    "YELLOW": 0,
-    "GRAY": 0,
+    "RED": 4,
+    "YELLOW": 46,
+    "GRAY": 8,
     "INFO": 1
   },
-  "totalPackages": 40
+  "totalPackages": 104
 }
