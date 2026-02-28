@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2026-02-27
+
+### Added
+
+- SECURITY.md with scope and response timeline
+- SHIP_GATE.md and SCORECARD.md for product audit trail
+- Security & Data Scope section in README
+
+### Changed
+
+- Promoted to v1.0.0 stable release (was 0.3.0)
+
 ## [0.3.0] - 2026-02-17
 
 ### Added

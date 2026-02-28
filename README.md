@@ -288,6 +288,31 @@ node bin/mcpt-publishing.mjs audit
 
 ---
 
+## Security & Data Scope
+
+| Aspect | Detail |
+|--------|--------|
+| **Data touched** | Package manifests, registry metadata (read-only API queries), receipt JSON files |
+| **Data NOT touched** | No credentials stored, no source code modification, no telemetry |
+| **Permissions** | Read: package manifests, registry APIs. Write: receipt files to user-specified paths |
+| **Network** | Registry APIs (npm, NuGet, PyPI) — read-only queries for verification |
+| **Telemetry** | None collected or sent |
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+## Scorecard
+
+| Category | Score |
+|----------|-------|
+| A. Security | 10 |
+| B. Error Handling | 10 |
+| C. Operator Docs | 10 |
+| D. Shipping Hygiene | 10 |
+| E. Identity (soft) | 10 |
+| **Overall** | **50/50** |
+
+> Full audit: [SHIP_GATE.md](SHIP_GATE.md) · [SCORECARD.md](SCORECARD.md)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
