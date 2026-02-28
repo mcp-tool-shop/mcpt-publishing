@@ -228,13 +228,7 @@
       "version": "0.1.5",
       "repo": "mcp-tool-shop/mcp-tool-shop",
       "audience": "internal",
-      "findings": [
-        {
-          "severity": "RED",
-          "code": "published-not-tagged",
-          "msg": "@mcptoolshop/promo-kit@0.1.5 — no git tag v0.1.5"
-        }
-      ]
+      "findings": []
     },
     {
       "name": "@mcptoolshop/ai-music-sheets",
@@ -296,29 +290,14 @@
     },
     {
       "name": "@mcptoolshop/claude-guardian",
-      "version": "1.1.2",
+      "version": "1.1.3",
       "repo": "mcp-tool-shop-org/claude-guardian",
       "audience": "front-door",
       "findings": [
         {
           "severity": "YELLOW",
           "code": "tagged-not-released",
-          "msg": "@mcptoolshop/claude-guardian tag v1.1.2 has no GitHub Release"
-        },
-        {
-          "severity": "RED",
-          "code": "wrong-repo-url",
-          "msg": "@mcptoolshop/claude-guardian repo URL \"\" doesn't match expected mcp-tool-shop-org/claude-guardian"
-        },
-        {
-          "severity": "GRAY",
-          "code": "missing-homepage",
-          "msg": "@mcptoolshop/claude-guardian has no homepage"
-        },
-        {
-          "severity": "GRAY",
-          "code": "missing-bugs-url",
-          "msg": "@mcptoolshop/claude-guardian has no bugs URL"
+          "msg": "@mcptoolshop/claude-guardian tag v1.1.3 has no GitHub Release"
         }
       ]
     },
@@ -480,19 +459,14 @@
     },
     {
       "name": "@mcptoolshop/vocal-synth-engine",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "repo": "mcp-tool-shop-org/vocal-synth-engine",
       "audience": "front-door",
       "findings": [
         {
           "severity": "YELLOW",
           "code": "tagged-not-released",
-          "msg": "@mcptoolshop/vocal-synth-engine tag v1.0.1 has no GitHub Release"
-        },
-        {
-          "severity": "RED",
-          "code": "bad-description",
-          "msg": "@mcptoolshop/vocal-synth-engine has missing/HTML description"
+          "msg": "@mcptoolshop/vocal-synth-engine tag v1.0.2 has no GitHub Release"
         },
         {
           "severity": "GRAY",
@@ -863,13 +837,7 @@
       "version": "1.0.0",
       "repo": "mcp-tool-shop-org/a11y-ci",
       "audience": "internal",
-      "findings": [
-        {
-          "severity": "RED",
-          "code": "published-not-tagged",
-          "msg": "a11y-ci@1.0.0 — no git tag v1.0.0"
-        }
-      ]
+      "findings": []
     },
     {
       "name": "mcp-stress-test",
@@ -1075,11 +1043,11 @@
     }
   ],
   "ghcr": [],
-  "generated": "2026-02-28T01:37:02.993Z",
+  "generated": "2026-02-28T01:40:34.911Z",
   "counts": {
-    "RED": 4,
+    "RED": 0,
     "YELLOW": 46,
-    "GRAY": 8,
+    "GRAY": 6,
     "INFO": 1
   },
   "totalPackages": 104

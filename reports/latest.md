@@ -1,21 +1,21 @@
 # Publishing Health Report
 
-> Generated: 2026-02-28T01:37:02.993Z
+> Generated: 2026-02-28T01:40:34.911Z
 
-**RED: 4** | **YELLOW: 46** | **GRAY: 8** | **INFO: 1** (indexing)
+**RED: 0** | **YELLOW: 46** | **GRAY: 6** | **INFO: 1** (indexing)
 
 ## Top Actions
 
-- **RED** @mcptoolshop/promo-kit@0.1.5 — no git tag v0.1.5
-- **RED** @mcptoolshop/claude-guardian repo URL "" doesn't match expected mcp-tool-shop-org/claude-guardian
-- **RED** @mcptoolshop/vocal-synth-engine has missing/HTML description
-- **RED** a11y-ci@1.0.0 — no git tag v1.0.0
 - **YELLOW** @mcptoolshop/mcpt tag v1.1.0 has no GitHub Release
 - **YELLOW** @mcptoolshop/mcp-tool-registry tag v1.1.4 has no GitHub Release
 - **YELLOW** @mcptoolshop/websketch tag v1.0.0 has no GitHub Release
 - **YELLOW** @mcptoolshop/websketch-ir tag v1.0.0 has no GitHub Release
 - **YELLOW** @mcptoolshop/websketch-demo tag v1.0.0 has no GitHub Release
 - **YELLOW** @mcptoolshop/websketch-mcp tag v1.0.0 has no GitHub Release
+- **YELLOW** @mcptoolshop/voice-soundboard-mcp tag v1.0.1 has no GitHub Release
+- **YELLOW** @mcptoolshop/consensus-os tag v1.0.5 has no GitHub Release
+- **YELLOW** @mcptoolshop/synthesis tag v1.0.0 has no GitHub Release
+- **YELLOW** @mcptoolshop/file-forge tag v1.0.0 has no GitHub Release
 
 ## Findings by Package
 
@@ -59,9 +59,6 @@
 ### @mcptoolshop/physics-svg
 - **GRAY** [missing-keywords] @mcptoolshop/physics-svg has no keywords
 
-### @mcptoolshop/promo-kit
-- **RED** [published-not-tagged] @mcptoolshop/promo-kit@0.1.5 — no git tag v0.1.5
-
 ### @mcptoolshop/ai-music-sheets
 - **YELLOW** [tagged-not-released] @mcptoolshop/ai-music-sheets tag v1.0.1 has no GitHub Release
 
@@ -73,10 +70,7 @@
 - **YELLOW** [tagged-not-released] @mcptoolshop/civility-kernel tag v1.0.0 has no GitHub Release
 
 ### @mcptoolshop/claude-guardian
-- **YELLOW** [tagged-not-released] @mcptoolshop/claude-guardian tag v1.1.2 has no GitHub Release
-- **RED** [wrong-repo-url] @mcptoolshop/claude-guardian repo URL "" doesn't match expected mcp-tool-shop-org/claude-guardian
-- **GRAY** [missing-homepage] @mcptoolshop/claude-guardian has no homepage
-- **GRAY** [missing-bugs-url] @mcptoolshop/claude-guardian has no bugs URL
+- **YELLOW** [tagged-not-released] @mcptoolshop/claude-guardian tag v1.1.3 has no GitHub Release
 
 ### @mcptoolshop/claude-session-copilot
 - **YELLOW** [tagged-not-released] @mcptoolshop/claude-session-copilot tag v1.0.0 has no GitHub Release
@@ -110,8 +104,7 @@
 - **YELLOW** [tagged-not-released] @mcptoolshop/repo-crawler-mcp tag v1.0.0 has no GitHub Release
 
 ### @mcptoolshop/vocal-synth-engine
-- **YELLOW** [tagged-not-released] @mcptoolshop/vocal-synth-engine tag v1.0.1 has no GitHub Release
-- **RED** [bad-description] @mcptoolshop/vocal-synth-engine has missing/HTML description
+- **YELLOW** [tagged-not-released] @mcptoolshop/vocal-synth-engine tag v1.0.2 has no GitHub Release
 - **GRAY** [missing-keywords] @mcptoolshop/vocal-synth-engine has no keywords
 
 ### Soundboard.Client
@@ -146,9 +139,6 @@
 
 ### nexus-control
 - **YELLOW** [tagged-not-released] nexus-control tag v1.0.0 has no GitHub Release
-
-### a11y-ci
-- **RED** [published-not-tagged] a11y-ci@1.0.0 — no git tag v1.0.0
 
 ### mcp-stress-test
 - **YELLOW** [tagged-not-released] mcp-stress-test tag v1.0.0 has no GitHub Release
@@ -204,13 +194,13 @@
 | @mcptoolshop/venvkit | 1.0.0 | front-door | YELLOW |
 | @mcptoolshop/voice-engine-dsp | 1.0.0 | internal | clean |
 | @mcptoolshop/physics-svg | 0.1.1 | internal | GRAY |
-| @mcptoolshop/promo-kit | 0.1.5 | internal | RED |
+| @mcptoolshop/promo-kit | 0.1.5 | internal | clean |
 | @mcptoolshop/ai-music-sheets | 1.0.1 | front-door | YELLOW |
 | @mcptoolshop/ai-jam-sessions | 1.0.0 | front-door | clean |
 | @mcptoolshop/backprop | 1.0.0 | front-door | YELLOW, GRAY |
 | @mcptoolshop/brand | 1.0.1 | internal | clean |
 | @mcptoolshop/civility-kernel | 1.0.0 | front-door | YELLOW |
-| @mcptoolshop/claude-guardian | 1.1.2 | front-door | YELLOW, RED, GRAY, GRAY |
+| @mcptoolshop/claude-guardian | 1.1.3 | front-door | YELLOW |
 | @mcptoolshop/claude-session-copilot | 1.0.0 | front-door | YELLOW |
 | @mcptoolshop/claude-sfx | 1.0.0 | front-door | YELLOW |
 | @mcptoolshop/clearance-opinion-engine | 1.0.0 | front-door | YELLOW |
@@ -224,7 +214,7 @@
 | @mcptoolshop/shipcheck | 1.0.1 | front-door | clean |
 | @mcptoolshop/site-theme | 1.0.0 | internal | clean |
 | @mcptoolshop/throttleai | 1.1.2 | front-door | clean |
-| @mcptoolshop/vocal-synth-engine | 1.0.1 | front-door | YELLOW, RED, GRAY |
+| @mcptoolshop/vocal-synth-engine | 1.0.2 | front-door | YELLOW, GRAY |
 | @mcptoolshop/logo-presets | 1.0.0 | internal | clean |
 | @mcptoolshop/logo-studio | 1.0.0 | internal | clean |
 | @mcptoolshop/mcpt-publishing | 1.0.0 | internal | clean |
@@ -276,7 +266,7 @@
 | codebatch | 1.0.0 | front-door | GRAY |
 | code-covered | 1.0.0 | front-door | YELLOW |
 | nexus-control | 1.0.0 | front-door | YELLOW |
-| a11y-ci | 1.0.0 | internal | RED |
+| a11y-ci | 1.0.0 | internal | clean |
 | mcp-stress-test | 1.0.0 | front-door | YELLOW |
 | file-compass | 1.0.0 | front-door | clean |
 | flexiflow | 1.0.0 | front-door | YELLOW |
