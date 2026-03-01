@@ -1,5 +1,5 @@
 {
-  "$comment": "Machine-readable inventory of all published packages. Source of truth for audit.mjs. Updated 2026-02-28.",
+  "$comment": "Machine-readable inventory of all published packages. Source of truth for audit.mjs. Updated 2026-03-01.",
   "npm": [
     { "name": "@mcptoolshop/mcpt", "repo": "mcp-tool-shop-org/mcpt", "audience": "front-door" },
     { "name": "@mcptoolshop/mcp-tool-registry", "repo": "mcp-tool-shop-org/mcp-tool-registry", "audience": "front-door" },
@@ -45,7 +45,24 @@
     { "name": "@mcptoolshop/logo-presets", "repo": "mcp-tool-shop/mcpt-logo-presets", "audience": "internal" },
     { "name": "@mcptoolshop/logo-studio", "repo": "mcp-tool-shop/mcpt-logo-studio", "audience": "internal" },
     { "name": "@mcptoolshop/mcpt-publishing", "repo": "mcp-tool-shop/mcpt-publishing", "audience": "internal" },
-    { "name": "@mcptoolshop/mcpt-link-fresh", "repo": "mcp-tool-shop/mcpt-link-fresh", "audience": "internal" }
+    { "name": "@mcptoolshop/mcpt-link-fresh", "repo": "mcp-tool-shop/mcpt-link-fresh", "audience": "internal" },
+    { "name": "@mcptoolshop/toolshopstudio", "repo": "mcp-tool-shop-org/toolshopstudio", "audience": "front-door" },
+    { "name": "@mcptoolshop/mcpt-publishing-assets", "repo": "mcp-tool-shop/mcpt-publishing", "audience": "internal" },
+    { "name": "@mcptoolshop/repomesh", "repo": "mcp-tool-shop-org/repomesh", "audience": "front-door" },
+    { "name": "@mcptoolshop/prov-engine", "repo": "mcp-tool-shop-org/prov-engine-js", "audience": "internal" },
+    { "name": "@attestia/types", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/verify", "repo": "mcp-tool-shop-org/Attestia", "audience": "front-door" },
+    { "name": "@attestia/registrum", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/ledger", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/chain-observer", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/proof", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/sdk", "repo": "mcp-tool-shop-org/Attestia", "audience": "front-door" },
+    { "name": "@attestia/node", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/event-store", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/vault", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/treasury", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/reconciler", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" },
+    { "name": "@attestia/witness", "repo": "mcp-tool-shop-org/Attestia", "audience": "internal" }
   ],
   "nuget": [
     { "name": "Soundboard.Client", "repo": "mcp-tool-shop-org/soundboard-maui", "audience": "front-door" },
@@ -102,7 +119,17 @@
     { "name": "cwm-mcp", "repo": "mcp-tool-shop-org/context-window-manager", "audience": "front-door" },
     { "name": "backpropagate", "repo": "mcp-tool-shop-org/backpropagate", "audience": "front-door" },
     { "name": "mcp-bouncer", "repo": "mcp-tool-shop-org/mcp-bouncer", "audience": "front-door" },
-    { "name": "nexus-router", "repo": "mcp-tool-shop-org/nexus-router", "audience": "front-door" }
+    { "name": "nexus-router", "repo": "mcp-tool-shop-org/nexus-router", "audience": "front-door" },
+    { "name": "mcp-select", "repo": "mcp-tool-shop-org/mcp-select", "audience": "front-door" },
+    { "name": "nexus-attest", "repo": "mcp-tool-shop-org/nexus-attest", "audience": "front-door" },
+    { "name": "nexus-router-adapter-stdout", "repo": "mcp-tool-shop-org/nexus-router-adapter-stdout", "audience": "front-door" },
+    { "name": "nexus-router-adapter-http", "repo": "mcp-tool-shop-org/nexus-router-adapter-http", "audience": "front-door" },
+    { "name": "nullout-mcp", "repo": "mcp-tool-shop-org/nullout", "audience": "front-door" },
+    { "name": "scalarscope", "repo": "mcp-tool-shop-org/ScalarScope", "audience": "front-door" },
+    { "name": "comfy-headless", "repo": "mcp-tool-shop-org/comfy-headless", "audience": "front-door" },
+    { "name": "audiobooker-ai", "repo": "mcp-tool-shop-org/audiobooker", "audience": "front-door" },
+    { "name": "a11y-assist", "repo": "mcp-tool-shop-org/a11y-assist", "audience": "front-door" },
+    { "name": "mcp-kv-context", "repo": "mcp-tool-shop-org/context-window-manager", "audience": "front-door" }
   ],
   "smithery": [
     { "name": "mcp-tool-shop/mcp-file-forge", "repo": "mcp-tool-shop-org/mcp-file-forge", "url": "https://smithery.ai/servers/mcp-tool-shop/mcp-file-forge", "tools": 17 },

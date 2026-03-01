@@ -6,9 +6,6 @@
   "bin": {
     "mcpt-publishing": "./bin/mcpt-publishing.mjs"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "files": [
     "bin/",
     "src/",
@@ -54,5 +51,8 @@
   "homepage": "https://github.com/mcp-tool-shop/mcpt-publishing#readme",
   "bugs": {
     "url": "https://github.com/mcp-tool-shop/mcpt-publishing/issues"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
