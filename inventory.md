@@ -1,6 +1,6 @@
 # Package Inventory
 
-> Generated: 2026-03-01 | Phase 0 audit-only | Registry is truth
+> Generated: 2026-03-02 | Phase 0 audit-only | Registry is truth
 
 ## npm Packages (49 @mcptoolshop + 13 @attestia = 62 total)
 
@@ -108,7 +108,7 @@
 | 26 | ClaimLedger | mcp-tool-shop-org/ClaimLedger | front-door | Claim ledger |
 | 27 | CreatorLedger | mcp-tool-shop-org/CreatorLedger | front-door | Creator ledger |
 
-## PyPI Packages (36 total)
+## PyPI Packages (38 total)
 
 | # | Package | Repo | Audience | Notes |
 |---|---------|------|----------|-------|
@@ -148,6 +148,8 @@
 | 34 | zip-meta-map | mcp-tool-shop-org/zip-meta-map | front-door | ZIP metadata manifests |
 | 35 | mcpt-pathway | mcp-tool-shop-org/pathway | front-door | Learning journey model |
 | 36 | audiobooker-ai | mcp-tool-shop-org/audiobooker | front-door | AI audiobook generator |
+| 37 | xrpl-camp | mcp-tool-shop-org/xrpl-camp | front-door | XRPL education CLI |
+| 38 | sovereignty-game | mcp-tool-shop-org/sovereignty | front-door | Governance strategy game |
 
 ## VS Code Extensions (5 total)
 
@@ -161,7 +163,7 @@
 
 ## Summary
 
-- **130 published packages** (62 npm + 27 NuGet + 36 PyPI + 5 VS Code)
+- **132 published packages** (62 npm + 27 NuGet + 38 PyPI + 5 VS Code)
 - **npm scopes**: @mcptoolshop (49) + @attestia (13)
 - **Ecosystems**: npmjs.com, nuget.org, pypi.org, VS Code Marketplace
 - **Registries checked**: npmjs.com, nuget.org, pypi.org, marketplace.visualstudio.com

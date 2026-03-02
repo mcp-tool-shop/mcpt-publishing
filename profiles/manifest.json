@@ -1,5 +1,5 @@
 {
-  "$comment": "Machine-readable inventory of all published packages. Source of truth for audit.mjs. Updated 2026-03-01.",
+  "$comment": "Machine-readable inventory of all published packages. Source of truth for audit.mjs. Updated 2026-03-02.",
   "npm": [
     { "name": "@mcptoolshop/mcpt", "repo": "mcp-tool-shop-org/mcpt", "audience": "front-door" },
     { "name": "@mcptoolshop/mcp-tool-registry", "repo": "mcp-tool-shop-org/mcp-tool-registry", "audience": "front-door" },
@@ -129,7 +129,9 @@
     { "name": "comfy-headless", "repo": "mcp-tool-shop-org/comfy-headless", "audience": "front-door" },
     { "name": "audiobooker-ai", "repo": "mcp-tool-shop-org/audiobooker", "audience": "front-door" },
     { "name": "a11y-assist", "repo": "mcp-tool-shop-org/a11y-assist", "audience": "front-door" },
-    { "name": "mcp-kv-context", "repo": "mcp-tool-shop-org/context-window-manager", "audience": "front-door" }
+    { "name": "mcp-kv-context", "repo": "mcp-tool-shop-org/context-window-manager", "audience": "front-door" },
+    { "name": "xrpl-camp", "repo": "mcp-tool-shop-org/xrpl-camp", "audience": "front-door" },
+    { "name": "sovereignty-game", "repo": "mcp-tool-shop-org/sovereignty", "audience": "front-door" }
   ],
   "smithery": [
     { "name": "mcp-tool-shop/mcp-file-forge", "repo": "mcp-tool-shop-org/mcp-file-forge", "url": "https://smithery.ai/servers/mcp-tool-shop/mcp-file-forge", "tools": 17 },
