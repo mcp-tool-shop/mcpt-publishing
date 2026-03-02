@@ -1,7 +1,7 @@
 {
   "name": "@mcptoolshop/mcpt-publishing",
-  "version": "1.0.0",
-  "description": "Publishing health auditor and receipt factory plugin for MCP Tool Shop packages.",
+  "version": "1.1.0",
+  "description": "Multi-registry publishing auditor — catch drift across npm, PyPI, and NuGet before your users do.",
   "type": "module",
   "bin": {
     "mcpt-publishing": "./bin/mcpt-publishing.mjs"
@@ -33,14 +33,15 @@
   },
   "dependencies": {},
   "keywords": [
-    "mcp",
     "publishing",
     "audit",
-    "receipts",
     "registry",
     "npm",
+    "pypi",
     "nuget",
-    "drift-detection"
+    "drift-detection",
+    "metadata",
+    "receipts"
   ],
   "author": "mcp-tool-shop",
   "license": "MIT",

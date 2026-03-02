@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-03-02
+
+### Added
+
+- xrpl-camp and sovereignty-game to manifest (132 total packages)
+- PyPI keyword in package.json (was missing despite full PyPI support)
+- "Setting up your manifest" section in README with example config
+
+### Changed
+
+- README rewritten for standalone use — no longer reads as internal plumbing
+- Package description repositioned: "Multi-registry publishing auditor" instead of "plugin for MCP Tool Shop"
+- Removed redundant h1 header (logo already contains the name)
+- Inventory updated to 132 packages (62 npm + 27 NuGet + 38 PyPI + 5 VS Code)
+
 ## [1.0.0] - 2026-02-27
 
 ### Added
