@@ -3,7 +3,7 @@
  * Zero dependencies — uses node:child_process, node:crypto, node:fs.
  */
 
-import { execSync } from "node:child_process";
+import { execSync, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync, statSync } from "node:fs";
 
@@ -21,6 +21,37 @@ import { readFileSync, statSync } from "node:fs";
 export function exec(cmd, opts = {}) {
   try {
     const stdout = execSync(cmd, {
+      encoding: "utf8",
+      timeout: opts.timeout ?? 120_000,
+      cwd: opts.cwd,
+      env: opts.env ? { ...process.env, ...opts.env } : process.env,
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    return { stdout, stderr: "", exitCode: 0 };
+  } catch (e) {
+    return {
+      stdout: e.stdout ?? "",
+      stderr: e.stderr ?? e.message,
+      exitCode: e.status ?? 1,
+    };
+  }
+}
+
+/**
+ * Execute a command with an argument array (no shell interpolation).
+ * Uses execFileSync — safe against injection via arguments.
+ *
+ * @param {string} file - Executable to run (e.g. "git", "gh")
+ * @param {string[]} args - Argument array
+ * @param {object} [opts]
+ * @param {string} [opts.cwd] - Working directory
+ * @param {number} [opts.timeout] - Timeout in ms (default 120s)
+ * @param {object} [opts.env] - Extra environment variables (merged with process.env)
+ * @returns {{ stdout: string, stderr: string, exitCode: number }}
+ */
+export function execArgs(file, args, opts = {}) {
+  try {
+    const stdout = execFileSync(file, args, {
       encoding: "utf8",
       timeout: opts.timeout ?? 120_000,
       cwd: opts.cwd,

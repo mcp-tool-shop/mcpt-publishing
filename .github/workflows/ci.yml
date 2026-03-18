@@ -73,6 +73,9 @@ jobs:
           node bin/mcpt-publishing.mjs providers --json
           node bin/mcpt-publishing.mjs init --dry-run
 
+      - name: Security audit (production deps)
+        run: npm audit --omit=dev
+
       - name: Run tests
         run: npm test
 
