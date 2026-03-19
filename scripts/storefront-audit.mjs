@@ -8,7 +8,7 @@
  *   node scripts/storefront-audit.mjs --json   # prints JSON to stdout only
  */
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,19 +25,20 @@ const LOGO_PATHS = ["logo.png", "logo.svg", "assets/logo.png", "assets/logo.svg"
 
 function gh(endpoint) {
   try {
-    return JSON.parse(execSync(`gh api "${endpoint}"`, { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }));
+    const raw = execFileSync("gh", ["api", endpoint], { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] });
+    return JSON.parse(raw);
   } catch { return null; }
 }
 
 function ghText(endpoint) {
   try {
-    return execSync(`gh api "${endpoint}" -H "Accept: application/vnd.github.raw+json"`, { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] });
+    return execFileSync("gh", ["api", endpoint, "-H", "Accept: application/vnd.github.raw+json"], { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] });
   } catch { return null; }
 }
 
 function fileExists(repo, path) {
   try {
-    execSync(`gh api "repos/${repo}/contents/${path}" --jq .name`, { encoding: "utf8", timeout: 10_000, stdio: ["pipe", "pipe", "pipe"] });
+    execFileSync("gh", ["api", `repos/${repo}/contents/${path}`, "--jq", ".name"], { encoding: "utf8", timeout: 10_000, stdio: ["pipe", "pipe", "pipe"] });
     return true;
   } catch { return false; }
 }

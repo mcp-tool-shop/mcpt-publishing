@@ -6,7 +6,7 @@
  * Has no local mode (repos don't have "About" fields on disk).
  */
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { Fixer } from "../fixer.mjs";
 
 const SITE_URL = "https://mcptoolshop.com";
@@ -69,8 +69,8 @@ export default class GitHubAboutFixer extends Fixer {
 
     try {
       const body = JSON.stringify(updates);
-      execSync(
-        `gh api "repos/${entry.repo}" --method PATCH --input -`,
+      execFileSync(
+        "gh", ["api", `repos/${entry.repo}`, "--method", "PATCH", "--input", "-"],
         { input: body, encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
       );
       return {
@@ -79,7 +79,8 @@ export default class GitHubAboutFixer extends Fixer {
         after: updates.homepage ?? meta.homepage,
         file: null,
       };
-    } catch {
+    } catch (e) {
+      process.stderr.write(`  ${this.code}: applyRemote failed: ${e.message}\n`);
       return { changed: false };
     }
   }
@@ -88,12 +89,13 @@ export default class GitHubAboutFixer extends Fixer {
 
   #fetchRepoMeta(repo) {
     try {
-      const raw = execSync(
-        `gh api "repos/${repo}" --jq "{homepage: .homepage, description: .description, topics: .topics}"`,
+      const raw = execFileSync(
+        "gh", ["api", `repos/${repo}`, "--jq", "{homepage: .homepage, description: .description, topics: .topics}"],
         { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
       );
       return JSON.parse(raw);
-    } catch {
+    } catch (e) {
+      process.stderr.write(`  ${this.code}: failed to fetch repo meta: ${e.message}\n`);
       return null;
     }
   }

@@ -4,8 +4,8 @@
  * Uses `gh api` to query package versions via the GitHub Packages API.
  */
 
-import { execSync } from "node:child_process";
 import { Provider } from "../provider.mjs";
+import { execArgs } from "../shell.mjs";
 
 export default class GhcrProvider extends Provider {
   get name() { return "ghcr"; }
@@ -50,22 +50,18 @@ export default class GhcrProvider extends Provider {
     // Try org-level endpoint first
     try {
       const endpoint = `/orgs/${owner}/packages/container/${encodeURIComponent(pkg)}/versions`;
-      const raw = execSync(
-        `gh api "${endpoint}" --jq "." 2>&1`,
-        { encoding: "utf8", timeout: 15_000 }
-      );
-      return JSON.parse(raw);
-    } catch {
-      // Fall back to user-level endpoint
-      try {
-        const endpoint = `/users/${owner}/packages/container/${encodeURIComponent(pkg)}/versions`;
-        const raw = execSync(
-          `gh api "${endpoint}" --jq "." 2>&1`,
-          { encoding: "utf8", timeout: 15_000 }
-        );
-        return JSON.parse(raw);
-      } catch { return null; }
-    }
+      const { stdout, exitCode } = execArgs("gh", ["api", endpoint, "--jq", "."], { timeout: 15_000 });
+      if (exitCode === 0) return JSON.parse(stdout);
+    } catch { /* fall through */ }
+
+    // Fall back to user-level endpoint
+    try {
+      const endpoint = `/users/${owner}/packages/container/${encodeURIComponent(pkg)}/versions`;
+      const { stdout, exitCode } = execArgs("gh", ["api", endpoint, "--jq", "."], { timeout: 15_000 });
+      if (exitCode === 0) return JSON.parse(stdout);
+    } catch { /* ignore */ }
+
+    return null;
   }
 
   #classify(entry, version, tags, releases) {

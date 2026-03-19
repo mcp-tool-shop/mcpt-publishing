@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-03-19
+
+### Security
+
+- **Eliminate shell injection surface**: Migrated all `execSync` string-interpolation calls to `execFileSync`/`execArgs` (argument arrays, no shell interpolation) across all providers, fixers, and GitHub glue
+- Replaced `curl` shell calls in PyPI and NuGet providers with native `fetch()` (Node 22+)
+- Updated SECURITY.md to include v1.1.x in supported versions table
+
+### Fixed
+
+- Silent error swallowing in fixers (`github-about`, `_npm-helpers`) now logs failures to stderr instead of returning silently
+- Added `verify` script (`npm audit + npm test`) to package.json for shipcheck gate D compliance
+
 ## [1.1.0] - 2026-03-02
 
 ### Added

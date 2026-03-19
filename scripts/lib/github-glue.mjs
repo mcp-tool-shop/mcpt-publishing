@@ -5,10 +5,10 @@
  * - updateHealthIssueWithReceipts() appends "Recent Receipts" to the pinned issue
  */
 
-import { execSync } from "node:child_process";
 import { writeFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { execArgs } from "./shell.mjs";
 
 /**
  * Upload a receipt JSON file as a GitHub Release asset.
@@ -20,16 +20,12 @@ import { tmpdir } from "node:os";
 export function attachReceiptToRelease(repo, tagName, receiptPath) {
   try {
     // Verify the release exists
-    execSync(
-      `gh api repos/${repo}/releases/tags/${tagName} --jq ".id"`,
-      { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
-    );
+    const verify = execArgs("gh", ["api", `repos/${repo}/releases/tags/${tagName}`, "--jq", ".id"], { timeout: 15_000 });
+    if (verify.exitCode !== 0) return { success: false, error: `Release ${tagName} not found` };
 
     // Upload receipt as asset (--clobber overwrites if already attached)
-    execSync(
-      `gh release upload ${tagName} "${receiptPath}" --repo ${repo} --clobber`,
-      { encoding: "utf8", timeout: 30_000, stdio: ["pipe", "pipe", "pipe"] }
-    );
+    const upload = execArgs("gh", ["release", "upload", tagName, receiptPath, "--repo", repo, "--clobber"], { timeout: 30_000 });
+    if (upload.exitCode !== 0) return { success: false, error: upload.stderr };
 
     return { success: true, url: `https://github.com/${repo}/releases/tag/${tagName}` };
   } catch (e) {
@@ -46,21 +42,23 @@ export function attachReceiptToRelease(repo, tagName, receiptPath) {
 export function updateHealthIssueWithReceipts(repo, receipts) {
   try {
     // Find the pinned health issue
-    const issueNum = execSync(
-      `gh issue list --repo "${repo}" --search "in:title Publishing Health" --state open --json number --jq ".[0].number"`,
-      { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
-    ).trim();
+    const issueResult = execArgs(
+      "gh", ["issue", "list", "--repo", repo, "--search", "in:title Publishing Health", "--state", "open", "--json", "number", "--jq", ".[0].number"],
+      { timeout: 15_000 }
+    );
+    const issueNum = issueResult.stdout.trim();
 
-    if (!issueNum) {
+    if (!issueNum || issueResult.exitCode !== 0) {
       process.stderr.write("Warning: no 'Publishing Health' issue found\n");
       return;
     }
 
     // Get current body
-    const body = execSync(
-      `gh issue view ${issueNum} --repo "${repo}" --json body --jq ".body"`,
-      { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
+    const bodyResult = execArgs(
+      "gh", ["issue", "view", issueNum, "--repo", repo, "--json", "body", "--jq", ".body"],
+      { timeout: 15_000 }
     );
+    const body = bodyResult.stdout;
 
     // Build receipt links section
     const receiptLines = receipts.map(r =>
@@ -89,9 +87,9 @@ export function updateHealthIssueWithReceipts(repo, receipts) {
     const tmpFile = join(tmpdir(), `health-issue-${Date.now()}.md`);
     writeFileSync(tmpFile, newBody);
 
-    execSync(
-      `gh issue edit ${issueNum} --repo "${repo}" --body-file "${tmpFile}"`,
-      { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
+    execArgs(
+      "gh", ["issue", "edit", issueNum, "--repo", repo, "--body-file", tmpFile],
+      { timeout: 15_000 }
     );
 
     unlinkSync(tmpFile);

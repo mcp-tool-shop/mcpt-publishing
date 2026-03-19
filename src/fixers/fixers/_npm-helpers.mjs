@@ -5,7 +5,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 /**
  * Read package.json from a local directory.
@@ -38,14 +38,15 @@ export function writePkgJson(pkgPath, data) {
  */
 export function readRemoteFile(repo, path) {
   try {
-    const raw = execSync(
-      `gh api "repos/${repo}/contents/${path}" --jq "{content: .content, sha: .sha, encoding: .encoding}"`,
+    const raw = execFileSync(
+      "gh", ["api", `repos/${repo}/contents/${path}`, "--jq", "{content: .content, sha: .sha, encoding: .encoding}"],
       { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
     );
     const parsed = JSON.parse(raw);
     const content = Buffer.from(parsed.content, parsed.encoding || "base64").toString("utf8");
     return { content, sha: parsed.sha };
-  } catch {
+  } catch (e) {
+    process.stderr.write(`  readRemoteFile: ${repo}/${path} failed: ${e.message}\n`);
     return null;
   }
 }
@@ -64,12 +65,13 @@ export function writeRemoteFile(repo, path, content, sha, message) {
   try {
     const b64 = Buffer.from(content).toString("base64");
     const body = JSON.stringify({ message, content: b64, sha });
-    execSync(
-      `gh api "repos/${repo}/contents/${path}" --method PUT --input -`,
+    execFileSync(
+      "gh", ["api", `repos/${repo}/contents/${path}`, "--method", "PUT", "--input", "-"],
       { input: body, encoding: "utf8", timeout: 30_000, stdio: ["pipe", "pipe", "pipe"] }
     );
     return true;
-  } catch {
+  } catch (e) {
+    process.stderr.write(`  writeRemoteFile: ${repo}/${path} failed: ${e.message}\n`);
     return false;
   }
 }

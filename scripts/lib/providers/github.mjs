@@ -6,8 +6,8 @@
  * can check for drift between registry and git state.
  */
 
-import { execSync } from "node:child_process";
 import { Provider } from "../provider.mjs";
+import { execArgs } from "../shell.mjs";
 
 export default class GitHubProvider extends Provider {
   get name() { return "github"; }
@@ -32,21 +32,17 @@ export default class GitHubProvider extends Provider {
 
   #fetchTags(repo) {
     try {
-      const raw = execSync(
-        `gh api repos/${repo}/tags --jq ".[].name" 2>&1`,
-        { encoding: "utf8", timeout: 15_000 }
-      );
-      return raw.trim().split("\n").filter(Boolean);
+      const { stdout, exitCode } = execArgs("gh", ["api", `repos/${repo}/tags`, "--jq", ".[].name"], { timeout: 15_000 });
+      if (exitCode !== 0) return [];
+      return stdout.trim().split("\n").filter(Boolean);
     } catch { return []; }
   }
 
   #fetchReleases(repo) {
     try {
-      const raw = execSync(
-        `gh api repos/${repo}/releases --jq ".[].tag_name" 2>&1`,
-        { encoding: "utf8", timeout: 15_000 }
-      );
-      return raw.trim().split("\n").filter(Boolean);
+      const { stdout, exitCode } = execArgs("gh", ["api", `repos/${repo}/releases`, "--jq", ".[].tag_name"], { timeout: 15_000 });
+      if (exitCode !== 0) return [];
+      return stdout.trim().split("\n").filter(Boolean);
     } catch { return []; }
   }
 }

@@ -6,7 +6,6 @@
  * Publish: packs .nupkg, computes SHA-256, pushes to nuget.org.
  */
 
-import { execSync } from "node:child_process";
 import { readdirSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { Provider } from "../provider.mjs";
@@ -20,8 +19,8 @@ export default class NuGetProvider extends Provider {
   }
 
   async audit(entry, ctx) {
-    const meta = this.#fetchMeta(entry.name);
-    const flatVersions = this.#fetchVersions(entry.name);
+    const meta = await this.#fetchMeta(entry.name);
+    const flatVersions = await this.#fetchVersions(entry.name);
     const tags = ctx.tags.get(entry.repo) ?? [];
     const releases = ctx.releases.get(entry.repo) ?? [];
 
@@ -114,21 +113,24 @@ export default class NuGetProvider extends Provider {
 
   // ─── Private ───────────────────────────────────────────────────────────────
 
-  #fetchMeta(id) {
+  async #fetchMeta(id) {
     try {
-      const url = `https://azuresearch-usnc.nuget.org/query?q=packageid:${id}&take=1`;
-      const raw = execSync(`curl -sf "${url}"`, { encoding: "utf8", timeout: 15_000 });
-      const data = JSON.parse(raw);
+      const url = `https://azuresearch-usnc.nuget.org/query?q=packageid:${encodeURIComponent(id)}&take=1`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+      if (!res.ok) return null;
+      const data = await res.json();
       return data.data?.[0] ?? null;
     } catch { return null; }
   }
 
   /** Flat container returns actual published versions (updates faster than search). */
-  #fetchVersions(id) {
+  async #fetchVersions(id) {
     try {
-      const url = `https://api.nuget.org/v3-flatcontainer/${id.toLowerCase()}/index.json`;
-      const raw = execSync(`curl -sf "${url}"`, { encoding: "utf8", timeout: 15_000 });
-      return JSON.parse(raw).versions ?? [];
+      const url = `https://api.nuget.org/v3-flatcontainer/${encodeURIComponent(id).toLowerCase()}/index.json`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.versions ?? [];
     } catch { return []; }
   }
 

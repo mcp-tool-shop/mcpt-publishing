@@ -4,7 +4,6 @@
  * Uses the PyPI JSON API: https://pypi.org/pypi/<pkg>/json
  */
 
-import { execSync } from "node:child_process";
 import { Provider } from "../provider.mjs";
 
 export default class PyPIProvider extends Provider {
@@ -15,7 +14,7 @@ export default class PyPIProvider extends Provider {
   }
 
   async audit(entry, ctx) {
-    const meta = this.#fetchMeta(entry.name);
+    const meta = await this.#fetchMeta(entry.name);
     const tags = ctx.tags.get(entry.repo) ?? [];
     const releases = ctx.releases.get(entry.repo) ?? [];
 
@@ -33,11 +32,12 @@ export default class PyPIProvider extends Provider {
 
   // ─── Private ───────────────────────────────────────────────────────────────
 
-  #fetchMeta(pkg) {
+  async #fetchMeta(pkg) {
     try {
-      const url = `https://pypi.org/pypi/${pkg}/json`;
-      const raw = execSync(`curl -sf "${url}"`, { encoding: "utf8", timeout: 15_000 });
-      return JSON.parse(raw);
+      const url = `https://pypi.org/pypi/${encodeURIComponent(pkg)}/json`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+      if (!res.ok) return null;
+      return await res.json();
     } catch { return null; }
   }
 

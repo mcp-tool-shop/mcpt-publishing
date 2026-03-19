@@ -142,11 +142,11 @@ export default class NuGetCsprojFixer extends Fixer {
 
   /** Find csproj remotely by checking common paths. */
   async #findCsprojRemote(entry) {
-    const { execSync } = await import("node:child_process");
+    const { execFileSync } = await import("node:child_process");
     try {
       // List repo root for .csproj files
-      const raw = execSync(
-        `gh api "repos/${entry.repo}/git/trees/HEAD?recursive=1" --jq "[.tree[].path | select(test(\"\\\\.csproj$\"))]"`,
+      const raw = execFileSync(
+        "gh", ["api", `repos/${entry.repo}/git/trees/HEAD?recursive=1`, "--jq", '[.tree[].path | select(test("\\\\.csproj$"))]'],
         { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
       );
       const paths = JSON.parse(raw);

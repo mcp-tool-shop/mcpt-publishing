@@ -5,11 +5,10 @@
  * Publish: packs tarball, computes SHA-256, publishes to registry.
  */
 
-import { execSync } from "node:child_process";
 import { readFileSync, unlinkSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { Provider } from "../provider.mjs";
-import { exec, hashFile } from "../shell.mjs";
+import { exec, execArgs, hashFile } from "../shell.mjs";
 
 export default class NpmProvider extends Provider {
   get name() { return "npm"; }
@@ -107,8 +106,9 @@ export default class NpmProvider extends Provider {
 
   #fetchMeta(pkg) {
     try {
-      const raw = execSync(`npm view ${pkg} --json 2>&1`, { encoding: "utf8", timeout: 15_000 });
-      return JSON.parse(raw);
+      const { stdout, exitCode } = execArgs("npm", ["view", pkg, "--json"], { timeout: 15_000 });
+      if (exitCode !== 0) return null;
+      return JSON.parse(stdout);
     } catch { return null; }
   }
 

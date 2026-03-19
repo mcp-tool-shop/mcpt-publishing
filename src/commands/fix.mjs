@@ -13,7 +13,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { loadConfig } from "../config/loader.mjs";
 import { runAudit } from "../audit/run-audit.mjs";
 import { emitFixReceipt } from "../receipts/fix-receipt.mjs";
@@ -326,7 +326,7 @@ function findEntryForFinding(manifest, finding) {
 /** Safely get commit SHA (returns null if not in a git repo). */
 function getCommitShaSafe(cwd) {
   try {
-    return execSync("git rev-parse HEAD", { cwd, encoding: "utf8" }).trim();
+    return execFileSync("git", ["rev-parse", "HEAD"], { cwd, encoding: "utf8" }).trim();
   } catch {
     return null;
   }
