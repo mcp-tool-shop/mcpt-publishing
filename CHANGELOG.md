@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-03-25
+
+### Security
+
+- SHA-pinned all GitHub Actions across ci.yml, pages.yml, and publish.yml for supply-chain safety
+
+### Added
+
+- 6 version consistency tests (semver, >= 1.0.0, CHANGELOG, CLI --version, scope, bin entry)
+- `tests/**` path trigger in CI workflow
+
 ## [1.1.1] - 2026-03-19
 
 ### Security
