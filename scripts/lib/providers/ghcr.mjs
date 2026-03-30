@@ -15,6 +15,9 @@ export default class GhcrProvider extends Provider {
   }
 
   async audit(entry, ctx) {
+    // ctx.tags and ctx.releases are expected to be pre-resolved Maps whose values
+    // are plain string arrays (not Promises). Callers must await all async data
+    // collection before constructing ctx and passing it here.
     const tags = ctx.tags.get(entry.repo) ?? [];
     const releases = ctx.releases.get(entry.repo) ?? [];
     const versions = this.#fetchVersions(entry.repo, entry.name);
@@ -36,10 +39,23 @@ export default class GhcrProvider extends Provider {
     // API returns newest first — extract the latest tagged version
     const latest = versions[0];
     const containerTags = latest?.metadata?.container?.tags ?? [];
-    const version = containerTags.find(t => /^\d/.test(t)) ?? containerTags[0] ?? "?";
-    const findings = this.#classify(entry, version, tags, releases);
+    const semverTag = containerTags.find(t => /^\d/.test(t));
+    const findings = this.#classify(entry, semverTag ?? "?", tags, releases);
 
-    return { version, findings };
+    if (!semverTag) {
+      // No semver tag found — fall back to the first available tag (may be a
+      // commit SHA or an unversioned label like "latest") but emit a finding so
+      // the drift can be surfaced in the JSON report rather than going unnoticed.
+      const fallback = containerTags[0] ?? "?";
+      findings.push({
+        severity: "YELLOW",
+        code: "no-semver-tag",
+        msg: `${entry.name} has no semver image tag — latest container tag is "${fallback}"`,
+      });
+      return { version: fallback, findings };
+    }
+
+    return { version: semverTag, findings };
   }
 
   // ─── Private ───────────────────────────────────────────────────────────────
@@ -49,14 +65,14 @@ export default class GhcrProvider extends Provider {
 
     // Try org-level endpoint first
     try {
-      const endpoint = `/orgs/${owner}/packages/container/${encodeURIComponent(pkg)}/versions`;
+      const endpoint = `/orgs/${encodeURIComponent(owner)}/packages/container/${encodeURIComponent(pkg)}/versions`;
       const { stdout, exitCode } = execArgs("gh", ["api", endpoint, "--jq", "."], { timeout: 15_000 });
       if (exitCode === 0) return JSON.parse(stdout);
     } catch { /* fall through */ }
 
     // Fall back to user-level endpoint
     try {
-      const endpoint = `/users/${owner}/packages/container/${encodeURIComponent(pkg)}/versions`;
+      const endpoint = `/users/${encodeURIComponent(owner)}/packages/container/${encodeURIComponent(pkg)}/versions`;
       const { stdout, exitCode } = execArgs("gh", ["api", endpoint, "--jq", "."], { timeout: 15_000 });
       if (exitCode === 0) return JSON.parse(stdout);
     } catch { /* ignore */ }

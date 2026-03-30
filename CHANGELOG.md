@@ -2,6 +2,61 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-03-30
+
+### Added
+
+- `audit --repo`, `--target`, `--severity`, `--skip-gray`, `--quiet` filter flags
+- `weekly --json` now includes full audit findings (not just exit codes)
+- Short flag aliases: `-n` (dry-run), `-t` (target), `-r` (repo), `-c` (config)
+- New fixer: `npm-description` for `bad-description` RED findings
+- New fixer: `git-tag-missing` diagnostic for `published-not-tagged`
+- GitHub metadata audit in live pipeline (wires `github-about` fixer)
+- `commitSha` populated in publish receipts via `getCommitSha()`
+- Audit findings now include `fixHint` field with actionable remediation commands
+- Ecosystem labels for Smithery, Fly.io, GitHub in reports
+- Unique audit receipt filenames (YYYY-MM-DD-HH-MM-SS) — no intra-day overwrites
+- `CONTRIBUTING.md` with provider/fixer extension guide
+- Handbook (6 Starlight pages: overview, getting-started, commands, fixers, receipts, CI)
+- Dynamic hero badge version on landing page (reads from package.json)
+- Weekly workflow card on landing page quickstart
+- Pre-publish gate in publish.yml (tests, tarball verify, CLI smoke)
+- `enabledProviders` typo detection with warning
+- `--repo` format validation in fix and publish commands
+
+### Changed
+
+- npm provider uses direct registry API fetch instead of `npm view` CLI (fixes CI ENOENT)
+- npm repo URL comparison normalized (strips git+, .git, protocol prefixes)
+- GitHub tag/release fetch uses `--paginate` (no 100-tag cap)
+- Removed deprecated `plan` command from help and router (exits 1 with removal message)
+- Schemas use `enum` instead of `const` for schemaVersion (allows minor/patch evolution)
+- Schema version validation uses major-version check (accepts 1.x.y)
+- `git add -A` replaced context docs in PR mode
+
+### Fixed
+
+- 91 Stage A findings: shell injection, XML injection, unhandled promise rejection, prototype pollution, path traversal, CI permissions, schema mismatches, and more
+- 82 Stage B proactive findings: defensive coding, observability, graceful degradation, future-proofing
+- `github-about` fixer ecosystem guard (no longer matches npm findings)
+- `npm-homepage` fixer ecosystem guard added
+- `readme-header` diagnose/apply mismatch on missing README
+- `findEntryForFinding` now matches on ecosystem + package name (not name alone)
+- `fix --pr` mode checks git command exit codes, logs push failures
+- `weekly` aborts on config/credential errors instead of proceeding to fix
+- Receipt writer uses atomic writes (wx flag) for immutability
+- Index writer uses atomic write-then-rename pattern
+- All remote JSON.parse calls wrapped in try/catch with actionable messages
+- `gh` CLI availability checked before remote operations
+
+### Security
+
+- Path traversal guards on receipt writer (repo.owner, repo.name, version)
+- XML entity escaping in nuget-csproj fixer
+- CI permissions scoped to job level (not top-level write)
+- `npm audit` in CI produces structured output with severity filtering
+- Receipt verification `|| true` replaced with `continue-on-error` + failure reporting
+
 ## [1.1.2] - 2026-03-25
 
 ### Security

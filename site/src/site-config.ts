@@ -1,4 +1,9 @@
+import { createRequire } from 'node:module';
 import type { SiteConfig } from '@mcptoolshop/site-theme';
+
+const _require = createRequire(import.meta.url);
+// Read version from the root package — single source of truth
+const { version: PKG_VERSION } = _require('../../package.json') as { version: string };
 
 export const config: SiteConfig = {
   title: 'mcpt-publishing',
@@ -10,12 +15,12 @@ export const config: SiteConfig = {
   footerText: 'MIT Licensed — built by <a href="https://mcp-tool-shop.github.io/" style="color:var(--color-muted);text-decoration:underline">MCP Tool Shop</a>',
 
   hero: {
-    badge: 'v1.1.0',
+    badge: `v${PKG_VERSION}`,
     headline: 'Your registry pages',
     headlineAccent: 'are drifting.',
     description: 'Stale descriptions, missing links, wrong tags. mcpt-publishing audits your packages across npm, PyPI, and NuGet — then fixes the drift and gives you a receipt.',
     primaryCta: { href: '#quickstart', label: 'Get started' },
-    secondaryCta: { href: '#what-it-catches', label: 'See what it catches' },
+    secondaryCta: { href: 'handbook/', label: 'Read the Handbook' },
     previews: [
       { label: 'Audit', code: 'npx mcpt-publishing audit' },
       { label: 'Fix', code: 'npx mcpt-publishing fix --dry-run' },
@@ -64,6 +69,19 @@ export const config: SiteConfig = {
             '# Verify the receipt',
             'npx mcpt-publishing verify-receipt \\',
             '  receipts/fix/latest.json',
+          ].join('\n'),
+        },
+        {
+          title: 'Weekly workflow',
+          code: [
+            '# Run the full weekly cycle:',
+            '# audit → fix → publish (all registries)',
+            'npx mcpt-publishing weekly',
+            '',
+            '# Dry-run to preview without changes',
+            'npx mcpt-publishing weekly --dry-run',
+            '',
+            '# receipts/weekly/latest.json has the full log',
           ].join('\n'),
         },
       ],

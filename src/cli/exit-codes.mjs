@@ -8,6 +8,7 @@
  *   4 — missing credentials for a requested operation
  *   5 — one or more publishes failed
  *   6 — one or more fixes failed to apply
+ *   7 — unexpected/unhandled error in router dispatch
  */
 export const EXIT = {
   SUCCESS: 0,
@@ -16,4 +17,5 @@ export const EXIT = {
   MISSING_CREDENTIALS: 4,
   PUBLISH_FAILURE: 5,
   FIX_FAILURE: 6,
+  UNEXPECTED_ERROR: 7,
 };

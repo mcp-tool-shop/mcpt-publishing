@@ -56,6 +56,13 @@ export async function loadFixers() {
     fixers.push(instance);
   }
 
+  // Sort by fixer.code for deterministic load order regardless of filesystem.
+  // The filesystem .sort() above handles filenames, but code values may diverge
+  // from filenames in the future. Sorting on code here guarantees stable ordering.
+  // TODO: when priority-based ordering is needed, add a `priority` getter to Fixer
+  //       (default 0, lower = earlier) and sort by [priority ASC, code ASC].
+  fixers.sort((a, b) => a.code.localeCompare(b.code));
+
   return fixers;
 }
 

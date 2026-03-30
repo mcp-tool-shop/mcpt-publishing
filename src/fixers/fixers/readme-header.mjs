@@ -10,8 +10,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { Fixer } from "../fixer.mjs";
 import { readRemoteFile, writeRemoteFile } from "./_npm-helpers.mjs";
-
-const SITE_URL = "https://mcptoolshop.com";
+import { SITE_URL } from "./_constants.mjs";
 const LOGO_PATHS = ["logo.png", "logo.svg", "assets/logo.png", "assets/logo.svg"];
 
 export default class ReadmeHeaderFixer extends Fixer {
@@ -29,14 +28,18 @@ export default class ReadmeHeaderFixer extends Fixer {
   async diagnose(entry, ctx, opts = {}) {
     if (opts.remote) {
       const remote = readRemoteFile(entry.repo, "README.md");
-      if (!remote) return { needed: true, before: null, after: "README.md with header", file: "README.md" };
+      if (!remote) {
+        process.stderr.write(`  readme-header: README.md not found remotely for ${entry.repo} — skipping (fixer cannot create files)\n`);
+        return { needed: false };
+      }
       return this.#analyzeContent(remote.content, entry);
     }
 
     const cwd = opts.cwd ?? process.cwd();
     const readmePath = join(cwd, "README.md");
     if (!existsSync(readmePath)) {
-      return { needed: true, before: null, after: "README.md with header", file: "README.md" };
+      process.stderr.write(`  readme-header: README.md not found at ${readmePath} — skipping (fixer cannot create files)\n`);
+      return { needed: false };
     }
     const content = readFileSync(readmePath, "utf8");
     return this.#analyzeContent(content, entry);
@@ -45,7 +48,10 @@ export default class ReadmeHeaderFixer extends Fixer {
   async applyLocal(entry, ctx, opts = {}) {
     const cwd = opts.cwd ?? process.cwd();
     const readmePath = join(cwd, "README.md");
-    if (!existsSync(readmePath)) return { changed: false };
+    if (!existsSync(readmePath)) {
+      process.stderr.write(`  readme-header: README.md not found at ${readmePath} — cannot apply local fix (file does not exist)\n`);
+      return { changed: false };
+    }
 
     const content = readFileSync(readmePath, "utf8");
     const newContent = this.#fixContent(content, entry, cwd);

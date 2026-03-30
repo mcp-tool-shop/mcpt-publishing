@@ -12,6 +12,11 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 
+// SYNC REQUIRED: this list must match the set of provider classes in
+// scripts/lib/providers/ (npm.mjs, nuget.mjs, pypi.mjs, ghcr.mjs).
+// When a new provider is added or an existing one is renamed, update both
+// the providers/ directory AND this array. The canonical sync point is the
+// Provider.name getter in each provider file.
 const VALID_TARGETS = ["npm", "nuget", "pypi", "ghcr"];
 
 /**
@@ -37,6 +42,12 @@ export function validate(receipt) {
   if (typeof receipt.repo !== "object" || !receipt.repo.owner || !receipt.repo.name) {
     throw new Error("repo must have owner and name");
   }
+  // Path traversal guard — owner, name, and version must not contain separators or '..'
+  for (const [field, value] of [["repo.owner", receipt.repo.owner], ["repo.name", receipt.repo.name]]) {
+    if (typeof value !== "string" || value.includes("..") || value.includes("/") || value.includes("\\")) {
+      throw new Error(`${field} contains invalid path characters`);
+    }
+  }
 
   // target
   if (!VALID_TARGETS.includes(receipt.target)) {
@@ -46,6 +57,9 @@ export function validate(receipt) {
   // version
   if (typeof receipt.version !== "string" || !receipt.version) {
     throw new Error("version must be a non-empty string");
+  }
+  if (receipt.version.includes("..") || receipt.version.includes("/") || receipt.version.includes("\\")) {
+    throw new Error("version contains invalid path characters");
   }
 
   // packageName
@@ -62,10 +76,14 @@ export function validate(receipt) {
   if (typeof receipt.timestamp !== "string" || !receipt.timestamp) {
     throw new Error("timestamp must be a non-empty string");
   }
+  if (isNaN(Date.parse(receipt.timestamp))) throw new Error("timestamp must be a valid ISO 8601 date string");
 
   // artifacts
   if (!Array.isArray(receipt.artifacts)) {
     throw new Error("artifacts must be an array");
+  }
+  if (receipt.artifacts.length === 0) {
+    throw new Error("artifacts must not be empty — at least one artifact is required");
   }
   for (const art of receipt.artifacts) {
     if (!art.name || typeof art.name !== "string") throw new Error("artifact.name required");
@@ -100,12 +118,16 @@ export function write(receipt) {
 
   const filePath = receiptPath(receipt);
 
-  if (existsSync(filePath)) {
-    throw new Error(`Receipt already exists (immutable): ${filePath}`);
-  }
-
   mkdirSync(dirname(filePath), { recursive: true });
-  writeFileSync(filePath, JSON.stringify(receipt, null, 2) + "\n");
+  try {
+    // Use 'wx' (exclusive create) flag — atomic: fails if file already exists
+    writeFileSync(filePath, JSON.stringify(receipt, null, 2) + "\n", { flag: "wx" });
+  } catch (e) {
+    if (e.code === "EEXIST") {
+      throw new Error(`Receipt already exists (immutable): ${filePath}`);
+    }
+    throw e;
+  }
   return filePath;
 }
 
@@ -119,5 +141,12 @@ export function write(receipt) {
 export function read(repoSlug, target, version) {
   const filePath = join(ROOT, "receipts", "publish", repoSlug, target, `${version}.json`);
   if (!existsSync(filePath)) return null;
-  return JSON.parse(readFileSync(filePath, "utf8"));
+  const receipt = JSON.parse(readFileSync(filePath, "utf8"));
+  try {
+    validate(receipt);
+  } catch (e) {
+    console.warn(`[receipt-writer] Corrupt receipt at ${filePath}: ${e.message}`);
+    return null;
+  }
+  return receipt;
 }

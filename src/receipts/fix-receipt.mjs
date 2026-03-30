@@ -32,7 +32,13 @@ export function emitFixReceipt(config, fixResult) {
     branchName: fixResult.branchName ?? null,
     changes: fixResult.changes ?? [],
     auditBefore: fixResult.auditBefore ?? null,
-    auditAfter: fixResult.auditAfter ?? null,
+    // auditAfter is always null — post-fix re-audit is not yet implemented.
+    // Operators must re-run `audit` manually after a fix run to confirm results.
+    auditAfter: null,
+    // auditAfterPending signals that the post-fix audit has not been run yet.
+    // When a post-fix audit is eventually wired in, this field should be set to false
+    // (or removed) and auditAfter should be populated with the audit results.
+    auditAfterPending: true,
     commitSha: fixResult.commitSha ?? null,
     fileHashes: fixResult.fileHashes ?? {},
   };

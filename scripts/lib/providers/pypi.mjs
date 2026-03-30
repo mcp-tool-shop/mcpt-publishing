@@ -14,14 +14,16 @@ export default class PyPIProvider extends Provider {
   }
 
   async audit(entry, ctx) {
+    this._fetchMetaError = null;
     const meta = await this.#fetchMeta(entry.name);
     const tags = ctx.tags.get(entry.repo) ?? [];
     const releases = ctx.releases.get(entry.repo) ?? [];
 
     if (!meta) {
+      const reason = this._fetchMetaError ? ` (${this._fetchMetaError})` : "";
       return {
         version: "?",
-        findings: [{ severity: "RED", code: "pypi-unreachable", msg: `Cannot reach ${entry.name} on PyPI` }],
+        findings: [{ severity: "RED", code: "pypi-unreachable", msg: `Cannot reach ${entry.name} on PyPI${reason}` }],
       };
     }
 
@@ -30,15 +32,39 @@ export default class PyPIProvider extends Provider {
     return { version, findings };
   }
 
+  // publish() not implemented — PyPI publishing uses twine; run manually
+
   // ─── Private ───────────────────────────────────────────────────────────────
 
   async #fetchMeta(pkg) {
+    const url = `https://pypi.org/pypi/${encodeURIComponent(pkg)}/json`;
+    let res;
     try {
-      const url = `https://pypi.org/pypi/${encodeURIComponent(pkg)}/json`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
-      if (!res.ok) return null;
+      res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+    } catch (e) {
+      if (e.name === "AbortError" || e.name === "TimeoutError") {
+        this._fetchMetaError = `PyPI request timed out after 15 s`;
+      } else {
+        this._fetchMetaError = `PyPI fetch error: ${e.message}`;
+      }
+      return null;
+    }
+    if (!res.ok) {
+      if (res.status === 429) {
+        this._fetchMetaError = `PyPI rate-limited (HTTP 429) — retry later`;
+      } else if (res.status === 404) {
+        this._fetchMetaError = `package not found on PyPI (HTTP 404)`;
+      } else {
+        this._fetchMetaError = `PyPI responded HTTP ${res.status}`;
+      }
+      return null;
+    }
+    try {
       return await res.json();
-    } catch { return null; }
+    } catch (e) {
+      this._fetchMetaError = `PyPI response parse failure: ${e.message}`;
+      return null;
+    }
   }
 
   #classify(entry, meta, version, tags, releases) {

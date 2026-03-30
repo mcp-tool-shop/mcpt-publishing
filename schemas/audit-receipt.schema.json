@@ -9,7 +9,8 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "enum": ["1.0.0"],
+      "description": "Audit receipt schema version — add future versions here without breaking old receipts"
     },
     "type": {
       "type": "string",

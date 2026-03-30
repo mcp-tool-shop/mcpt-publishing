@@ -26,6 +26,10 @@ Flags:
   --json        Output result as JSON
   --help        Show this help
 
+Note:
+  This command does not use publishing.config.json — it operates purely on the
+  receipt file provided as an argument.
+
 Checks:
   1. File exists and is readable
   2. Valid JSON parse
@@ -150,8 +154,8 @@ export async function execute(flags) {
 function validatePublishReceipt(r) {
   const errors = [];
 
-  if (r.schemaVersion !== "1.0.0") {
-    errors.push(`Unknown schemaVersion: ${r.schemaVersion}`);
+  if (String(r.schemaVersion ?? "").split(".")[0] !== "1") {
+    errors.push(`Unsupported schemaVersion: ${r.schemaVersion} (expected major version 1)`);
   }
   if (typeof r.repo !== "object" || !r.repo.owner || !r.repo.name) {
     errors.push("repo must have owner and name");
@@ -159,8 +163,8 @@ function validatePublishReceipt(r) {
   if (!VALID_TARGETS.includes(r.target)) {
     errors.push(`Invalid target: ${r.target}`);
   }
-  if (typeof r.commitSha !== "string" || !/^[0-9a-f]{40}$/.test(r.commitSha)) {
-    errors.push("commitSha must be 40 lowercase hex characters");
+  if (typeof r.commitSha !== "string" || !/^[0-9a-f]{40}([0-9a-f]{24})?$/.test(r.commitSha)) {
+    errors.push("commitSha must be 40 lowercase hex characters (SHA-1) or 64 lowercase hex characters (SHA-256)");
   }
   if (!Array.isArray(r.artifacts)) {
     errors.push("artifacts must be an array");
@@ -188,8 +192,8 @@ function validatePublishReceipt(r) {
 function validateFixReceipt(r) {
   const errors = [];
 
-  if (r.schemaVersion !== "1.0.0") {
-    errors.push(`Unknown schemaVersion: ${r.schemaVersion}`);
+  if (String(r.schemaVersion ?? "").split(".")[0] !== "1") {
+    errors.push(`Unsupported schemaVersion: ${r.schemaVersion} (expected major version 1)`);
   }
   if (typeof r.repo !== "string" || !r.repo) {
     errors.push("repo must be a non-empty string");

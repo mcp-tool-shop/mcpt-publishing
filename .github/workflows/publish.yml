@@ -24,10 +24,30 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Install workspace dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build (if present)
         run: npm run build --if-present
+
+      - name: Run tests
+        run: npm test
+
+      - name: Verify tarball contents
+        run: |
+          npm pack --dry-run 2>&1 | tee /tmp/pack-output.txt
+          # Ensure required files are present in the tarball
+          grep -q "bin/" /tmp/pack-output.txt || (echo "ERROR: bin/ missing from tarball" && exit 1)
+          grep -q "src/" /tmp/pack-output.txt || (echo "ERROR: src/ missing from tarball" && exit 1)
+          grep -q "README.md" /tmp/pack-output.txt || (echo "ERROR: README.md missing from tarball" && exit 1)
+          grep -q "CHANGELOG.md" /tmp/pack-output.txt || (echo "ERROR: CHANGELOG.md missing from tarball" && exit 1)
+          grep -q "LICENSE" /tmp/pack-output.txt || (echo "ERROR: LICENSE missing from tarball" && exit 1)
+          echo "Tarball contents verified."
+
+      - name: CLI smoke test
+        run: |
+          node bin/mcpt-publishing.mjs --version
+          node bin/mcpt-publishing.mjs --help
+          echo "CLI smoke test passed."
 
       - name: Publish to npm
         run: npm publish --provenance --access public

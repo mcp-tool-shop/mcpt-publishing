@@ -34,7 +34,13 @@ export default class NpmKeywordsFixer extends Fixer {
     if (opts.remote) {
       const remote = readRemoteFile(entry.repo, "package.json");
       if (!remote) return { needed: false };
-      const data = JSON.parse(remote.content);
+      let data;
+      try {
+        data = JSON.parse(remote.content);
+      } catch (e) {
+        process.stderr.write(`  npm-keywords: failed to parse package.json for ${entry.repo}: ${e.message}\n`);
+        return { needed: false };
+      }
       if (data.keywords?.length > 0) return { needed: false };
       return { needed: true, before: null, after: expected, file: "package.json" };
     }
@@ -61,7 +67,13 @@ export default class NpmKeywordsFixer extends Fixer {
     const remote = readRemoteFile(entry.repo, "package.json");
     if (!remote) return { changed: false };
 
-    const data = JSON.parse(remote.content);
+    let data;
+    try {
+      data = JSON.parse(remote.content);
+    } catch (e) {
+      process.stderr.write(`  npm-keywords: failed to parse package.json for ${entry.repo}: ${e.message}\n`);
+      return { changed: false };
+    }
     const before = data.keywords ?? null;
     data.keywords = this.#buildKeywords(entry);
 

@@ -23,7 +23,7 @@
 ## B. Error Handling
 
 - [x] `[all]` Errors follow the Structured Error Shape: `code`, `message`, `hint`, `cause?`, `retryable?` (2026-02-27)
-- [x] `[cli]` Exit codes: 0 ok · 1 user error · 2 runtime error · 5 publish failure · 6 fix failure (2026-02-27)
+- [x] `[cli]` Exit codes: 0 success · 2 drift found · 3 config/schema error · 4 missing credentials · 5 publish failure · 6 fix failure (2026-02-27)
 - [x] `[cli]` No raw stack traces without `--debug` (2026-02-27)
 - [ ] `[mcp]` SKIP: not an MCP server
 - [ ] `[mcp]` SKIP: not an MCP server
@@ -55,8 +55,8 @@
 ## E. Identity (soft gate — does not block ship)
 
 - [x] `[all]` Logo in README header (2026-02-27)
-- [ ] `[all]` SKIP: translations not yet added
-- [ ] `[org]` SKIP: personal repo — no landing page
+- [x] `[all]` README translations added: ES, FR, HI, IT, JA, PT-BR, ZH (2026-03-30)
+- [x] `[all]` Landing page live at https://mcp-tool-shop.github.io/mcpt-publishing/ (2026-03-30)
 - [x] `[all]` GitHub repo metadata: description, homepage, topics (2026-02-27)
 
 ---

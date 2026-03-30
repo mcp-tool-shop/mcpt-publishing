@@ -8,7 +8,7 @@
 import { readFileSync, unlinkSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { Provider } from "../provider.mjs";
-import { exec, execArgs, hashFile } from "../shell.mjs";
+import { exec, hashFile, getCommitSha } from "../shell.mjs";
 
 export default class NpmProvider extends Provider {
   get name() { return "npm"; }
@@ -18,7 +18,8 @@ export default class NpmProvider extends Provider {
   }
 
   async audit(entry, ctx) {
-    const meta = this.#fetchMeta(entry.name);
+    this._fetchMetaError = null;
+    const meta = await this.#fetchMeta(entry.name);
     const tags = ctx.tags.get(entry.repo) ?? [];
     const releases = ctx.releases.get(entry.repo) ?? [];
 
@@ -73,14 +74,23 @@ export default class NpmProvider extends Provider {
     const tarballPath = join(cwd, tarball);
 
     // Compute SHA-256
-    const { sha256, size } = hashFile(tarballPath);
+    let sha256, size;
+    try {
+      ({ sha256, size } = hashFile(tarballPath));
+    } catch (e) {
+      try { unlinkSync(tarballPath); } catch { /* ignore */ }
+      return { success: false, version, artifacts: [], error: `Failed to hash ${tarball}: ${e.message}` };
+    }
 
-    // Publish (or dry-run)
+    // Publish (or dry-run).
+    // Timeout is 300 000 ms (5 min): npm publish can be slow on large tarballs or
+    // under registry congestion, but anything beyond 5 min indicates a hung process
+    // rather than normal latency — at that point aborting and retrying is safer.
     const publishCmd = opts.dryRun
       ? "npm publish --dry-run --access public"
       : "npm publish --access public";
 
-    const pubResult = exec(publishCmd, { cwd });
+    const pubResult = exec(publishCmd, { cwd, timeout: 300_000 });
     if (pubResult.exitCode !== 0) {
       // Clean up tarball on failure
       try { unlinkSync(tarballPath); } catch { /* ignore */ }
@@ -91,7 +101,6 @@ export default class NpmProvider extends Provider {
     try { unlinkSync(tarballPath); } catch { /* ignore */ }
 
     // Build artifact metadata
-    const scopedName = entry.name.replace(/^@/, "").replace(/\//, "-");
     const artifact = {
       name: tarball,
       sha256,
@@ -99,24 +108,64 @@ export default class NpmProvider extends Provider {
       url: `https://www.npmjs.com/package/${entry.name}/v/${version}`,
     };
 
-    return { success: true, version, artifacts: [artifact] };
+    // Capture commit SHA for the receipt
+    let commitSha = "";
+    try { commitSha = getCommitSha(cwd); } catch { /* not in a git repo — leave blank */ }
+
+    return { success: true, version, artifacts: [artifact], commitSha };
   }
 
   // ─── Private ───────────────────────────────────────────────────────────────
 
-  #fetchMeta(pkg) {
+  async #fetchMeta(pkgName) {
+    const url = `https://registry.npmjs.org/${encodeURIComponent(pkgName)}`;
+    let res;
     try {
-      const { stdout, exitCode } = execArgs("npm", ["view", pkg, "--json"], { timeout: 15_000 });
-      if (exitCode !== 0) return null;
-      return JSON.parse(stdout);
-    } catch { return null; }
+      res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+    } catch (e) {
+      if (e.name === "AbortError" || e.name === "TimeoutError") {
+        this._fetchMetaError = `npm registry request timed out after 15 s`;
+      } else {
+        this._fetchMetaError = `npm registry fetch error: ${e.message}`;
+      }
+      return null;
+    }
+    if (res.status === 404) {
+      this._fetchMetaError = `package not found on npm registry`;
+      return null;
+    }
+    if (!res.ok) {
+      this._fetchMetaError = `npm registry responded HTTP ${res.status}`;
+      return null;
+    }
+    try {
+      const data = await res.json();
+      // Normalize to the shape that #classify() expects:
+      // dist-tags.latest, version, repository.url, description, readme, homepage, bugs.url, keywords
+      const latest = data["dist-tags"]?.latest;
+      const versionMeta = latest ? (data.versions?.[latest] ?? {}) : {};
+      return {
+        "dist-tags": data["dist-tags"],
+        version: latest,
+        repository: versionMeta.repository ?? data.repository,
+        description: versionMeta.description ?? data.description,
+        readme: data.readme,
+        homepage: versionMeta.homepage ?? data.homepage,
+        bugs: versionMeta.bugs ?? data.bugs,
+        keywords: versionMeta.keywords ?? data.keywords,
+      };
+    } catch (e) {
+      this._fetchMetaError = `npm registry response parse failure: ${e.message}`;
+      return null;
+    }
   }
 
   #classify(pkg, meta, tags, releases) {
     const findings = [];
 
     if (!meta) {
-      findings.push({ severity: "RED", code: "npm-unreachable", msg: `Cannot reach ${pkg.name} on npm` });
+      const reason = this._fetchMetaError ? ` (${this._fetchMetaError})` : "";
+      findings.push({ severity: "RED", code: "npm-unreachable", msg: `Cannot reach ${pkg.name} on npm${reason}` });
       return findings;
     }
 
@@ -133,9 +182,20 @@ export default class NpmProvider extends Provider {
       findings.push({ severity: "YELLOW", code: "tagged-not-released", msg: `${pkg.name} tag ${tagName} has no GitHub Release` });
     }
 
-    // Repo URL check
+    // Repo URL check — normalize both sides to bare "org/repo" before comparing.
+    // npm repository.url can appear as: "git+https://github.com/org/repo.git",
+    // "git://github.com/org/repo", "https://github.com/org/repo", etc.
     const repoUrl = meta.repository?.url ?? "";
-    if (!repoUrl.includes(pkg.repo.split("/")[0])) {
+    const normalizeRepoUrl = (url) => url
+      .replace(/^git\+/, "")
+      .replace(/^git:\/\//, "")
+      .replace(/^https?:\/\//, "")
+      .replace(/^github\.com\//, "")
+      .replace(/\.git$/, "")
+      .replace(/\/$/, "");
+    const normalizedUrl = normalizeRepoUrl(repoUrl);
+    const normalizedExpected = normalizeRepoUrl(pkg.repo);
+    if (!normalizedUrl || normalizedUrl !== normalizedExpected) {
       findings.push({ severity: "RED", code: "wrong-repo-url", msg: `${pkg.name} repo URL "${repoUrl}" doesn't match expected ${pkg.repo}` });
     }
 

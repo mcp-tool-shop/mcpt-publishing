@@ -115,6 +115,8 @@ export async function execute(flags) {
     if (!dryRun) {
       process.stderr.write(`\nNext: edit profiles/manifest.json to add your packages, then run:\n`);
       process.stderr.write(`  mcpt-publishing audit\n`);
+      process.stderr.write(`\nNote: If profiles/ exists but manifest.json is missing (partial init),\n`);
+      process.stderr.write(`run: mcpt-publishing init --force\n`);
     }
   }
 

@@ -18,8 +18,8 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0",
-      "description": "Receipt schema version"
+      "enum": ["1.0.0"],
+      "description": "Receipt schema version — add future versions here without breaking old receipts"
     },
     "repo": {
       "type": "object",
@@ -32,8 +32,8 @@
     },
     "target": {
       "type": "string",
-      "enum": ["npm", "nuget", "pypi", "ghcr"],
-      "description": "Registry this was published to"
+      "enum": ["npm", "nuget", "pypi", "ghcr", "github", "smithery", "flyio"],
+      "description": "Canonical publishable target list — must stay in sync with profile.schema.json ecosystem enum. npm/nuget/pypi/ghcr/github = package registries; smithery/flyio = deployment targets."
     },
     "version": {
       "type": "string",
@@ -45,8 +45,8 @@
     },
     "commitSha": {
       "type": "string",
-      "pattern": "^[0-9a-f]{40}$",
-      "description": "Full 40-char commit SHA at time of publish"
+      "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$",
+      "description": "Full commit SHA at time of publish — 40 hex chars (SHA-1) or 64 hex chars (SHA-256)"
     },
     "timestamp": {
       "type": "string",

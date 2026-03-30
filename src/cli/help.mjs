@@ -17,7 +17,6 @@ Commands:
   providers       List registered providers and their status
   verify-receipt  Validate a receipt file (schema + integrity)
   init            Scaffold publishing.config.json and starter manifest
-  plan            [deprecated — use fix --dry-run]
 
 Global flags:
   --help      Show help for a command

@@ -13,6 +13,8 @@
  *   --help      Show help
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { EXIT } from "../cli/exit-codes.mjs";
 
 export const helpText = `
@@ -56,6 +58,14 @@ Examples:
  * @returns {number} Exit code
  */
 export async function execute(flags) {
+  // Propagate --config to sub-commands via env so audit/fix/publish all see the
+  // same config file without each sub-command needing explicit flag forwarding.
+  // Contract: PUBLISHING_CONFIG is set once here; sub-commands read it from env.
+  if (flags.config) {
+    const { resolve } = await import("node:path");
+    process.env.PUBLISHING_CONFIG = resolve(flags.config);
+  }
+
   const dryRun = !!flags["dry-run"];
   const doPublish = !!flags.publish;
   const json = !!flags.json;
@@ -66,13 +76,28 @@ export async function execute(flags) {
   if (!json) process.stderr.write("═══ Step 1/3: Audit ═══\n\n");
 
   const auditMod = await import("./audit.mjs");
+  // Known gap: audit JSON output is suppressed here so it doesn't pollute the weekly
+  // --json result. As a consequence, individual finding details are not included in the
+  // weekly --json output — only the audit exit code is captured in results.audit.exitCode.
+  // Workaround: re-run `mcpt-publishing audit --json` separately to get the full findings list.
   const auditFlags = { ...flags, json: false }; // Suppress JSON for intermediate steps
   // We don't want audit to call process.exit, so we catch its exit code
+  // Note: config is loaded independently inside audit and fix execute calls. The
+  // double-load is acceptable at current scale (two fast synchronous reads).
   const auditCode = await auditMod.execute(auditFlags);
   results.audit = { exitCode: auditCode };
 
   if (!json) {
     process.stderr.write(`\nAudit: exit ${auditCode}\n\n`);
+  }
+
+  if (auditCode !== EXIT.SUCCESS && auditCode !== EXIT.DRIFT_FOUND) {
+    if (json) {
+      process.stdout.write(JSON.stringify({ results, error: "Audit step failed with unrecoverable error" }, null, 2) + "\n");
+    } else {
+      process.stderr.write(`Weekly aborted: audit returned exit ${auditCode} (unrecoverable).\n`);
+    }
+    return auditCode;
   }
 
   // ─── Step 2: Fix ────────────────────────────────────────────────────────────
@@ -130,7 +155,21 @@ export async function execute(flags) {
 
   // ─── Summary ────────────────────────────────────────────────────────────────
   if (json) {
-    process.stdout.write(JSON.stringify({ results }, null, 2) + "\n");
+    // Enrich JSON output with findings from reports/latest.json if available
+    let findings = null;
+    try {
+      // Determine reports dir: load config to find reportsDir
+      const { loadConfig } = await import("../config/loader.mjs");
+      const cfg = loadConfig();
+      const latestJsonPath = join(cfg.reportsDir, "latest.json");
+      if (existsSync(latestJsonPath)) {
+        findings = JSON.parse(readFileSync(latestJsonPath, "utf8"));
+      }
+    } catch {
+      // Best-effort — don't fail weekly if we can't read the report
+    }
+    const output = findings !== null ? { results, findings } : { results };
+    process.stdout.write(JSON.stringify(output, null, 2) + "\n");
   } else {
     process.stderr.write("═══ Weekly Summary ═══\n");
     process.stderr.write(`  Audit:   exit ${results.audit.exitCode}\n`);

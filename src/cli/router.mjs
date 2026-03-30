@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { GLOBAL_HELP } from "./help.mjs";
+import { EXIT } from "./exit-codes.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -14,7 +15,6 @@ const COMMANDS = {
   audit:            () => import("../commands/audit.mjs"),
   fix:              () => import("../commands/fix.mjs"),
   init:             () => import("../commands/init.mjs"),
-  plan:             () => import("../commands/plan.mjs"),
   publish:          () => import("../commands/publish.mjs"),
   providers:        () => import("../commands/providers.mjs"),
   weekly:           () => import("../commands/weekly.mjs"),
@@ -33,7 +33,8 @@ const COMMANDS = {
  * @returns {object}
  */
 export function parseFlags(args) {
-  const flags = { _positionals: [] };
+  const flags = Object.create(null);
+  flags._positionals = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === "--") {
@@ -51,10 +52,26 @@ export function parseFlags(args) {
       }
     } else if (arg.startsWith("-") && arg.length === 2) {
       // Short flag aliases
-      const SHORT = { h: "help", v: "version", j: "json" };
-      const expanded = SHORT[arg[1]];
-      if (expanded) flags[expanded] = true;
-      else flags._positionals.push(arg);
+      const SHORT = { h: "help", v: "version", j: "json", n: "dry-run", t: "target", r: "repo", c: "config" };
+      const key = arg[1];
+      const expanded = SHORT[key];
+      if (expanded) {
+        // Value-taking short flags: -t, -r, -c accept the next argument as their value
+        const VALUE_FLAGS = new Set(["target", "repo", "config"]);
+        if (VALUE_FLAGS.has(expanded)) {
+          const next = args[i + 1];
+          if (next && !next.startsWith("-")) {
+            flags[expanded] = next;
+            i++;
+          } else {
+            flags[expanded] = true;
+          }
+        } else {
+          flags[expanded] = true;
+        }
+      } else {
+        flags._positionals.push(arg);
+      }
     } else {
       flags._positionals.push(arg);
     }
@@ -71,11 +88,9 @@ export async function run(argv) {
   const subcommand = args[0];
 
   // --help / -h at global level (before subcommand lookup)
+  // If a valid subcommand precedes --help, fall through to per-command help dispatch below.
   if (args.includes("--help") || args.includes("-h")) {
-    // If a valid subcommand precedes --help, show per-command help
-    if (subcommand && COMMANDS[subcommand]) {
-      // handled below after flag parsing
-    } else {
+    if (!subcommand || !COMMANDS[subcommand]) {
       process.stdout.write(GLOBAL_HELP + "\n");
       process.exit(0);
     }
@@ -95,7 +110,8 @@ export async function run(argv) {
       process.stderr.write(`Unknown command: ${subcommand}\n\n`);
     }
     process.stdout.write(GLOBAL_HELP + "\n");
-    process.exit(!subcommand || subcommand.startsWith("-") ? 0 : 3);
+    // Exit 1 for unknown commands (usage error); 0 for bare invocation or flag-only args
+    process.exit(!subcommand || subcommand.startsWith("-") ? 0 : 1);
   }
 
   // Parse flags after the subcommand
@@ -118,7 +134,8 @@ export async function run(argv) {
     const exitCode = await mod.execute(flags);
     process.exit(exitCode ?? 0);
   } catch (e) {
-    process.stderr.write(`Error: ${e.message}\n`);
-    process.exit(3);
+    process.stderr.write(`Error: ${e?.message ?? String(e)}\n`);
+    if (e?.stack) process.stderr.write(`${e.stack}\n`);
+    process.exit(EXIT.UNEXPECTED_ERROR);
   }
 }

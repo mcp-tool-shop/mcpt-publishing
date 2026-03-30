@@ -8,7 +8,7 @@
  * The Receipt Factory site can consume this file to render dashboards.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 
 /**
@@ -74,7 +74,11 @@ export function updateFixEntry(receiptsDir, fixReceipt) {
 function loadIndex(receiptsDir) {
   const indexPath = join(receiptsDir, "index.json");
   if (existsSync(indexPath)) {
-    return JSON.parse(readFileSync(indexPath, "utf8"));
+    try {
+      return JSON.parse(readFileSync(indexPath, "utf8"));
+    } catch (e) {
+      process.stderr.write(`  index-writer: failed to parse ${indexPath}, starting fresh: ${e.message}\n`);
+    }
   }
   return { latestAudit: null, publish: {} };
 }
@@ -82,5 +86,7 @@ function loadIndex(receiptsDir) {
 function saveIndex(receiptsDir, index) {
   mkdirSync(receiptsDir, { recursive: true });
   const indexPath = join(receiptsDir, "index.json");
-  writeFileSync(indexPath, JSON.stringify(index, null, 2) + "\n");
+  const tmpPath = indexPath + ".tmp";
+  writeFileSync(tmpPath, JSON.stringify(index, null, 2) + "\n");
+  renameSync(tmpPath, indexPath);
 }

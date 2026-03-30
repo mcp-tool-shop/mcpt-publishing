@@ -38,6 +38,7 @@ export function attachReceiptToRelease(repo, tagName, receiptPath) {
  * Appends or replaces a "Recent Receipts" section in the issue body.
  * @param {string} repo     - The mcpt-publishing repo
  * @param {Array<{target: string, version: string, packageName: string, releaseUrl: string}>} receipts
+ * @returns {{ success: boolean, reason?: string }}
  */
 export function updateHealthIssueWithReceipts(repo, receipts) {
   try {
@@ -50,7 +51,7 @@ export function updateHealthIssueWithReceipts(repo, receipts) {
 
     if (!issueNum || issueResult.exitCode !== 0) {
       process.stderr.write("Warning: no 'Publishing Health' issue found\n");
-      return;
+      return { success: false, reason: "no Publishing Health issue found" };
     }
 
     // Get current body
@@ -58,6 +59,11 @@ export function updateHealthIssueWithReceipts(repo, receipts) {
       "gh", ["issue", "view", issueNum, "--repo", repo, "--json", "body", "--jq", ".body"],
       { timeout: 15_000 }
     );
+    // Guard: abort if the body fetch failed so we don't operate on empty/stale content
+    if (bodyResult.exitCode !== 0) {
+      process.stderr.write(`Warning: could not fetch issue body (exit ${bodyResult.exitCode})\n`);
+      return { success: false, reason: "could not fetch issue body" };
+    }
     const body = bodyResult.stdout;
 
     // Build receipt links section
@@ -85,15 +91,22 @@ export function updateHealthIssueWithReceipts(repo, receipts) {
 
     // Write to temp file to avoid shell escaping issues
     const tmpFile = join(tmpdir(), `health-issue-${Date.now()}.md`);
-    writeFileSync(tmpFile, newBody);
+    try {
+      writeFileSync(tmpFile, newBody);
+      const editResult = execArgs(
+        "gh", ["issue", "edit", issueNum, "--repo", repo, "--body-file", tmpFile],
+        { timeout: 15_000 }
+      );
+      if (editResult.exitCode !== 0) {
+        return { success: false, reason: `gh issue edit failed: ${editResult.stderr}` };
+      }
+    } finally {
+      try { unlinkSync(tmpFile); } catch { /* ignore */ }
+    }
 
-    execArgs(
-      "gh", ["issue", "edit", issueNum, "--repo", repo, "--body-file", tmpFile],
-      { timeout: 15_000 }
-    );
-
-    unlinkSync(tmpFile);
+    return { success: true };
   } catch (e) {
     process.stderr.write(`Warning: failed to update health issue: ${e.message}\n`);
+    return { success: false, reason: e.message };
   }
 }

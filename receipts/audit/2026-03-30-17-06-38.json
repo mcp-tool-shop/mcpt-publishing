@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "type": "audit",
+  "timestamp": "2026-03-30T17:06:38.497Z",
+  "counts": {
+    "RED": 53,
+    "YELLOW": 23,
+    "GRAY": 8,
+    "INFO": 1
+  },
+  "ecosystems": {
+    "npm": 62,
+    "nuget": 27,
+    "pypi": 38,
+    "smithery": 3,
+    "flyio": 3,
+    "ghcr": 0
+  },
+  "totalPackages": 133,
+  "reportFiles": {
+    "json": "F:\\AI\\mcpt-publishing\\reports\\latest.json",
+    "markdown": "F:\\AI\\mcpt-publishing\\reports\\latest.md"
+  }
+}

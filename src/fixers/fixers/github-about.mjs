@@ -8,17 +8,17 @@
 
 import { execFileSync } from "node:child_process";
 import { Fixer } from "../fixer.mjs";
-
-const SITE_URL = "https://mcptoolshop.com";
+import { SITE_URL } from "./_constants.mjs";
 
 export default class GitHubAboutFixer extends Fixer {
   get code() { return "github-about"; }
   get target() { return "github"; }
 
   canFix(finding) {
-    // This fixer handles repo-level homepage (not npm-level)
-    // It activates for missing-homepage when the ecosystem is github-level
-    return finding.code === "missing-homepage";
+    // This fixer handles repo-level homepage (not npm-level).
+    // The ecosystem check prevents collision with npm-homepage fixer,
+    // which also responds to "missing-homepage" for npm packages.
+    return finding.code === "missing-homepage" && finding.ecosystem === "github";
   }
 
   describe() {

@@ -9,7 +9,13 @@
 import { readdirSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { Provider } from "../provider.mjs";
-import { exec, hashFile } from "../shell.mjs";
+import { exec, execArgs, hashFile, getCommitSha } from "../shell.mjs";
+
+// NuGet search endpoint — override via env var if the default US North-Central
+// region is unreachable or if you need to point at a private NuGet feed.
+// Canonical discovery: GET https://api.nuget.org/v3/index.json and look for the
+// resource with @type "SearchQueryService" — that URL is the authoritative value.
+const NUGET_SEARCH_URL = process.env.NUGET_SEARCH_URL ?? "https://azuresearch-usnc.nuget.org/query";
 
 export default class NuGetProvider extends Provider {
   get name() { return "nuget"; }
@@ -19,8 +25,11 @@ export default class NuGetProvider extends Provider {
   }
 
   async audit(entry, ctx) {
+    this._fetchMetaError = null;
+    this._fetchVersionsError = null;
     const meta = await this.#fetchMeta(entry.name);
-    const flatVersions = await this.#fetchVersions(entry.name);
+    // Short-circuit: if the search API already failed, flat-container likely will too.
+    const flatVersions = meta !== null ? await this.#fetchVersions(entry.name) : [];
     const tags = ctx.tags.get(entry.repo) ?? [];
     const releases = ctx.releases.get(entry.repo) ?? [];
 
@@ -83,12 +92,24 @@ export default class NuGetProvider extends Provider {
 
     // Compute SHA-256
     const nupkgPath = join(outputDir, targetNupkg);
-    const { sha256, size } = hashFile(nupkgPath);
+    let sha256, size;
+    try {
+      ({ sha256, size } = hashFile(nupkgPath));
+    } catch (e) {
+      try { rmSync(outputDir, { recursive: true }); } catch { /* ignore */ }
+      return { success: false, version, artifacts: [], error: `Failed to hash ${targetNupkg}: ${e.message}` };
+    }
 
     // Push (or dry-run)
     if (!opts.dryRun) {
-      const pushResult = exec(
-        `dotnet nuget push "${nupkgPath}" --api-key "${process.env.NUGET_API_KEY}" --source https://api.nuget.org/v3/index.json --skip-duplicate`,
+      // SECURITY NOTE: passing --api-key as a CLI argument exposes the key value in
+      // the OS process list (visible to other users via `ps` / Task Manager).
+      // A more secure alternative is to store the key in a NuGet.Config file
+      // (dotnet nuget add source --api-key) so it never appears on the command line.
+      // Changing this mechanism is a larger refactor; accepted risk for now.
+      const pushResult = execArgs(
+        "dotnet",
+        ["nuget", "push", nupkgPath, "--api-key", process.env.NUGET_API_KEY, "--source", "https://api.nuget.org/v3/index.json", "--skip-duplicate"],
         { cwd }
       );
       if (pushResult.exitCode !== 0) {
@@ -108,37 +129,76 @@ export default class NuGetProvider extends Provider {
       url: `https://www.nuget.org/packages/${entry.name}/${version}`,
     };
 
-    return { success: true, version, artifacts: [artifact] };
+    // Capture commit SHA for the receipt
+    let commitSha = "";
+    try { commitSha = getCommitSha(cwd); } catch { /* not in a git repo — leave blank */ }
+
+    return { success: true, version, artifacts: [artifact], commitSha };
   }
 
   // ─── Private ───────────────────────────────────────────────────────────────
 
   async #fetchMeta(id) {
+    // NUGET_SEARCH_URL is configured at module load (see top of file).
+    // Override via the NUGET_SEARCH_URL environment variable if needed.
+    const url = `${NUGET_SEARCH_URL}?q=packageid:${encodeURIComponent(id)}&take=1`;
+    let res;
     try {
-      const url = `https://azuresearch-usnc.nuget.org/query?q=packageid:${encodeURIComponent(id)}&take=1`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
-      if (!res.ok) return null;
+      res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+    } catch (e) {
+      if (e.name === "AbortError" || e.name === "TimeoutError") {
+        this._fetchMetaError = `NuGet search request timed out after 15 s`;
+      } else {
+        this._fetchMetaError = `NuGet search fetch error: ${e.message}`;
+      }
+      return null;
+    }
+    if (!res.ok) {
+      this._fetchMetaError = `NuGet search responded HTTP ${res.status}`;
+      return null;
+    }
+    try {
       const data = await res.json();
       return data.data?.[0] ?? null;
-    } catch { return null; }
+    } catch (e) {
+      this._fetchMetaError = `NuGet search response parse failure: ${e.message}`;
+      return null;
+    }
   }
 
   /** Flat container returns actual published versions (updates faster than search). */
   async #fetchVersions(id) {
+    const url = `https://api.nuget.org/v3-flatcontainer/${encodeURIComponent(id).toLowerCase()}/index.json`;
+    let res;
     try {
-      const url = `https://api.nuget.org/v3-flatcontainer/${encodeURIComponent(id).toLowerCase()}/index.json`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
-      if (!res.ok) return [];
+      res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+    } catch (e) {
+      if (e.name === "AbortError" || e.name === "TimeoutError") {
+        this._fetchVersionsError = `NuGet flat-container request timed out after 15 s`;
+      } else {
+        this._fetchVersionsError = `NuGet flat-container fetch error: ${e.message}`;
+      }
+      return [];
+    }
+    if (!res.ok) {
+      this._fetchVersionsError = `NuGet flat-container responded HTTP ${res.status}`;
+      return [];
+    }
+    try {
       const data = await res.json();
       return data.versions ?? [];
-    } catch { return []; }
+    } catch (e) {
+      this._fetchVersionsError = `NuGet flat-container response parse failure: ${e.message}`;
+      return [];
+    }
   }
 
   #classify(pkg, meta, tags, releases, flatVersions) {
     const findings = [];
 
     if (!meta) {
-      findings.push({ severity: "RED", code: "nuget-unreachable", msg: `Cannot reach ${pkg.name} on NuGet` });
+      const reason = this._fetchMetaError ? ` (${this._fetchMetaError})` : "";
+      findings.push({ severity: "RED", code: "nuget-unreachable", msg: `Cannot reach ${pkg.name} on NuGet${reason}` });
       return findings;
     }
 
@@ -146,7 +206,7 @@ export default class NuGetProvider extends Provider {
     const latestFlat = flatVersions.length > 0 ? flatVersions[flatVersions.length - 1] : null;
 
     // Detect indexing lag: flat container knows about a newer version than the search API
-    const indexingLag = latestFlat && latestFlat !== searchVer;
+    const indexingLag = latestFlat && latestFlat.toLowerCase() !== searchVer.toLowerCase();
     const ver = latestFlat ?? searchVer;
     const tagName = `v${ver}`;
 

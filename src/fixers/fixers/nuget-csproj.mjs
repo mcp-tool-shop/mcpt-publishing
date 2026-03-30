@@ -8,6 +8,7 @@
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { execFileSync } from "node:child_process";
 import { Fixer } from "../fixer.mjs";
 import { readRemoteFile, writeRemoteFile } from "./_npm-helpers.mjs";
 
@@ -35,7 +36,7 @@ export default class NuGetCsprojFixer extends Fixer {
       const remote = readRemoteFile(entry.repo, csprojPath);
       if (!remote) return { needed: false };
 
-      const needs = this.#analyzeCsproj(remote.content, repoUrl, projectUrl);
+      const needs = this.#analyzeCsproj(remote.content);
       if (needs.length === 0) return { needed: false };
 
       return {
@@ -50,8 +51,14 @@ export default class NuGetCsprojFixer extends Fixer {
     const csprojPath = this.#findCsprojLocal(cwd, entry.name);
     if (!csprojPath) return { needed: false };
 
-    const content = readFileSync(csprojPath, "utf8");
-    const needs = this.#analyzeCsproj(content, repoUrl, projectUrl);
+    let content;
+    try {
+      content = readFileSync(csprojPath, "utf8");
+    } catch (e) {
+      process.stderr.write(`  nuget-csproj: failed to read ${csprojPath}: ${e.message}\n`);
+      return { needed: false };
+    }
+    const needs = this.#analyzeCsproj(content);
     if (needs.length === 0) return { needed: false };
 
     return {
@@ -67,15 +74,27 @@ export default class NuGetCsprojFixer extends Fixer {
     const csprojPath = this.#findCsprojLocal(cwd, entry.name);
     if (!csprojPath) return { changed: false };
 
-    const content = readFileSync(csprojPath, "utf8");
+    let content;
+    try {
+      content = readFileSync(csprojPath, "utf8");
+    } catch (e) {
+      process.stderr.write(`  nuget-csproj: failed to read ${csprojPath}: ${e.message}\n`);
+      return { changed: false };
+    }
     const repoUrl = `https://github.com/${entry.repo}`;
     const projectUrl = `${repoUrl}#readme`;
     const newContent = this.#fixCsproj(content, repoUrl, projectUrl);
 
     if (newContent === content) return { changed: false };
 
+    const needs = this.#analyzeCsproj(content);
     writeFileSync(csprojPath, newContent);
-    return { changed: true, before: "(missing metadata)", after: "(metadata added)", file: csprojPath };
+    return {
+      changed: true,
+      before: needs.map(n => `${n}: (missing)`).join(", "),
+      after: needs.map(n => `${n}: (set)`).join(", "),
+      file: csprojPath,
+    };
   }
 
   async applyRemote(entry, ctx, opts = {}) {
@@ -142,14 +161,22 @@ export default class NuGetCsprojFixer extends Fixer {
 
   /** Find csproj remotely by checking common paths. */
   async #findCsprojRemote(entry) {
-    const { execFileSync } = await import("node:child_process");
     try {
       // List repo root for .csproj files
+      // The jq pattern "\\\\.csproj$" produces the literal string \\.csproj$ after
+      // shell/JS escaping: JS "\\\\" → two backslashes → shell sees \\, jq sees \\.
+      // We include `truncated` in the output object so we can warn when GitHub
+      // has silently omitted files from a large repo's recursive tree.
       const raw = execFileSync(
-        "gh", ["api", `repos/${entry.repo}/git/trees/HEAD?recursive=1`, "--jq", '[.tree[].path | select(test("\\\\.csproj$"))]'],
+        "gh", ["api", `repos/${entry.repo}/git/trees/HEAD?recursive=1`, "--jq", '{truncated: .truncated, paths: [.tree[].path | select(test("\\\\.csproj$"))]}'],
         { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
       );
-      const paths = JSON.parse(raw);
+      const treeResponse = JSON.parse(raw);
+      // GitHub truncates recursive tree responses for large repos — warn if so.
+      if (treeResponse?.truncated) {
+        process.stderr.write(`  Warning: git tree response for ${entry.repo} was truncated — some .csproj files may be missed.\n`);
+      }
+      const paths = treeResponse?.paths ?? [];
       if (paths.length === 0) return null;
 
       // Prefer one matching the package name
@@ -159,22 +186,45 @@ export default class NuGetCsprojFixer extends Fixer {
                name.toLowerCase() === entry.name.split(".").pop().toLowerCase();
       });
       return match ?? paths[0];
-    } catch {
+    } catch (e) {
+      // 404 / empty repo / no HEAD — genuine not-found, return silently.
+      const msg = e.message ?? "";
+      const is404 = msg.includes("404") || msg.includes("Not Found") ||
+                    msg.includes("Git Repository is empty") || msg.includes("no such branch");
+      if (!is404) {
+        process.stderr.write(`  nuget-csproj: unexpected error finding .csproj in ${entry.repo}: ${msg}\n`);
+      }
       return null;
     }
   }
 
   /** Check which metadata elements are missing. */
-  #analyzeCsproj(content, repoUrl, projectUrl) {
+  #analyzeCsproj(content) {
     const missing = [];
     if (!content.includes("<PackageProjectUrl>")) missing.push("PackageProjectUrl");
     if (!content.includes("<RepositoryUrl>")) missing.push("RepositoryUrl");
     return missing;
   }
 
+  /**
+   * Escape XML special characters to prevent injection when interpolating
+   * user-controlled values (e.g. entry.repo) into XML content.
+   */
+  #escapeXml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&apos;");
+  }
+
   /** Insert missing metadata into the first <PropertyGroup>. */
   #fixCsproj(content, repoUrl, projectUrl) {
     let result = content;
+
+    const safeRepoUrl = this.#escapeXml(repoUrl);
+    const safeProjectUrl = this.#escapeXml(projectUrl);
 
     // Find the first <PropertyGroup> closing or a line before </PropertyGroup>
     const pgMatch = result.match(/<PropertyGroup[^>]*>/);
@@ -184,15 +234,16 @@ export default class NuGetCsprojFixer extends Fixer {
 
     const additions = [];
     if (!result.includes("<PackageProjectUrl>")) {
-      additions.push(`    <PackageProjectUrl>${projectUrl}</PackageProjectUrl>`);
+      additions.push(`    <PackageProjectUrl>${safeProjectUrl}</PackageProjectUrl>`);
     }
     if (!result.includes("<RepositoryUrl>")) {
-      additions.push(`    <RepositoryUrl>${repoUrl}.git</RepositoryUrl>`);
+      additions.push(`    <RepositoryUrl>${safeRepoUrl}.git</RepositoryUrl>`);
     }
 
     if (additions.length === 0) return result;
 
-    const insertBlock = "\n" + additions.join("\n");
+    // Extra leading newline separates inserted metadata from existing content for readability.
+    const insertBlock = "\n\n" + additions.join("\n");
     result = result.slice(0, insertIdx) + insertBlock + result.slice(insertIdx);
 
     return result;

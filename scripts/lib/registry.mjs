@@ -5,7 +5,7 @@
  * and validates it extends Provider with required method overrides.
  */
 
-import { readdirSync } from "node:fs";
+import { readdir } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { Provider } from "./provider.mjs";
@@ -21,7 +21,7 @@ const REQUIRED_METHODS = ["detect", "audit"];
  * @returns {Promise<Provider[]>}
  */
 export async function loadProviders() {
-  const files = readdirSync(PROVIDERS_DIR).filter(f => f.endsWith(".mjs"));
+  const files = (await readdir(PROVIDERS_DIR)).filter(f => f.endsWith(".mjs"));
   const providers = [];
 
   for (const file of files) {

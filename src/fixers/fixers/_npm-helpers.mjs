@@ -7,6 +7,28 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 
+/** Cached result of gh CLI availability check. */
+let _ghAvailable = null;
+
+/**
+ * Check whether the `gh` CLI is installed and authenticated.
+ * Result is cached after the first call.
+ * Throws a structured error if gh is not found.
+ */
+export function isGhAvailable() {
+  if (_ghAvailable !== null) return _ghAvailable;
+  try {
+    execFileSync("gh", ["--version"], { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
+    _ghAvailable = true;
+  } catch {
+    _ghAvailable = false;
+    const err = new Error("gh CLI not found — install GitHub CLI and run gh auth login");
+    err.code = "GH_CLI_NOT_FOUND";
+    throw err;
+  }
+  return _ghAvailable;
+}
+
 /**
  * Read package.json from a local directory.
  * @param {string} cwd - Directory containing package.json
@@ -15,7 +37,13 @@ import { execFileSync } from "node:child_process";
 export function readPkgJson(cwd) {
   const pkgPath = join(cwd, "package.json");
   if (!existsSync(pkgPath)) return null;
-  const data = JSON.parse(readFileSync(pkgPath, "utf8"));
+  let data;
+  try {
+    data = JSON.parse(readFileSync(pkgPath, "utf8"));
+  } catch (e) {
+    process.stderr.write(`  readPkgJson: failed to parse ${pkgPath}: ${e.message}\n`);
+    return null;
+  }
   return { data, path: pkgPath };
 }
 
@@ -28,6 +56,16 @@ export function writePkgJson(pkgPath, data) {
   writeFileSync(pkgPath, JSON.stringify(data, null, 2) + "\n");
 }
 
+/** Validate repo and path params used in GitHub API calls. */
+function validateRepoAndPath(repo, path) {
+  if (!/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(repo)) {
+    throw new Error(`Invalid repo format: "${repo}". Expected "owner/name" with alphanumeric, hyphen, underscore, or dot characters only.`);
+  }
+  if (path.includes("..")) {
+    throw new Error(`Invalid path: "${path}". Path must not contain ".." sequences.`);
+  }
+}
+
 /**
  * Read a file from a GitHub repo via the API.
  * Returns { content, sha } or null.
@@ -37,6 +75,8 @@ export function writePkgJson(pkgPath, data) {
  * @returns {{ content: string, sha: string } | null}
  */
 export function readRemoteFile(repo, path) {
+  isGhAvailable(); // throws structured error if gh CLI is missing
+  validateRepoAndPath(repo, path);
   try {
     const raw = execFileSync(
       "gh", ["api", `repos/${repo}/contents/${path}`, "--jq", "{content: .content, sha: .sha, encoding: .encoding}"],
@@ -62,6 +102,7 @@ export function readRemoteFile(repo, path) {
  * @returns {boolean} success
  */
 export function writeRemoteFile(repo, path, content, sha, message) {
+  validateRepoAndPath(repo, path);
   try {
     const b64 = Buffer.from(content).toString("base64");
     const body = JSON.stringify({ message, content: b64, sha });

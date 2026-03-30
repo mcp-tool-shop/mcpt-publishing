@@ -7,6 +7,7 @@
 
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { execFileSync } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,10 +32,14 @@ export async function runAudit(config, manifest) {
     ? providers.filter(p => enabled.includes(p.name))
     : providers;
 
-  // Shared context for tag/release caching
+  // Shared context for tag/release caching and GitHub error tracking.
+  // ctx.errors maps repo names to error messages for packages where GitHub
+  // context load failed (e.g. due to rate-limiting). Downstream consumers
+  // can inspect this to understand which results may be incomplete.
   const ctx = {
     tags: new Map(),
     releases: new Map(),
+    errors: new Map(),
   };
 
   // Find the GitHub provider (context loader) — must run before ecosystem providers
@@ -57,9 +62,16 @@ export async function runAudit(config, manifest) {
     for (const pkg of packages) {
       const entry = { ...pkg, ecosystem };
 
-      // Ensure GitHub context (tags + releases) is loaded for this repo
+      // Ensure GitHub context (tags + releases) is loaded for this repo.
+      // Failures (e.g. rate-limit mid-loop) are recorded in ctx.errors so the
+      // post-loop summary can warn operators that some results may be stale.
       if (ghProvider && ghProvider.detect(entry)) {
-        await ghProvider.audit(entry, ctx);
+        try {
+          await ghProvider.audit(entry, ctx);
+        } catch (err) {
+          process.stderr.write(`  provider "github" failed for ${pkg.name}: ${err.message}\n`);
+          ctx.errors.set(pkg.name, err.message);
+        }
       }
 
       // Find the ecosystem-specific provider(s)
@@ -69,9 +81,40 @@ export async function runAudit(config, manifest) {
       const findings = [];
 
       for (const provider of ecosystemProviders) {
-        const result = await provider.audit(entry, ctx);
-        if (result.version && result.version !== "?") version = result.version;
-        findings.push(...result.findings);
+        try {
+          const result = await provider.audit(entry, ctx);
+          if (result?.version != null && result.version !== "?") version = result.version;
+          if (Array.isArray(result?.findings)) findings.push(...result.findings);
+        } catch (err) {
+          process.stderr.write(`  provider "${provider.name}" failed for ${pkg.name}: ${err.message}\n`);
+          findings.push({
+            severity: "RED",
+            code: "provider-error",
+            message: `Provider "${provider.name}" threw an unexpected error: ${err.message}`,
+          });
+        }
+      }
+
+      // GitHub metadata audit — check homepage for 'front-door' repos.
+      // Runs after GitHub context (tags/releases) has already been loaded above.
+      if (pkg.repo && entry.audience === "front-door") {
+        try {
+          const homepage = execFileSync(
+            "gh", ["api", `repos/${pkg.repo}`, "--jq", ".homepage"],
+            { encoding: "utf8", timeout: 15_000, stdio: ["pipe", "pipe", "pipe"] }
+          ).trim();
+          // gh outputs "null" (string) when the field is unset
+          if (!homepage || homepage === "null" || homepage === '""') {
+            findings.push({
+              severity: "YELLOW",
+              code: "missing-homepage",
+              message: `GitHub repo ${pkg.repo} has no homepage set`,
+              ecosystem: "github",
+            });
+          }
+        } catch (err) {
+          process.stderr.write(`  github-metadata: failed to check homepage for ${pkg.repo}: ${err.message}\n`);
+        }
       }
 
       const resultEntry = {
@@ -87,6 +130,16 @@ export async function runAudit(config, manifest) {
       }
       allFindings.push(...findings.map(f => ({ ...f, pkg: pkg.name, ecosystem })));
     }
+  }
+
+  // Warn if any GitHub context loads failed — those packages may have stale data.
+  if (ctx.errors.size > 0) {
+    const failed = [...ctx.errors.keys()].join(", ");
+    process.stderr.write(
+      `\nWARNING: GitHub context failed for ${ctx.errors.size} package(s): ${failed}\n` +
+      `  Results for these packages may be incomplete or use stale tag/release data.\n` +
+      `  Re-run after GitHub rate-limit resets to get accurate results.\n\n`
+    );
   }
 
   // Counts

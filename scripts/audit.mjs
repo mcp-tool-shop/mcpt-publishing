@@ -16,6 +16,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const MANIFEST = JSON.parse(readFileSync(join(ROOT, "profiles", "manifest.json"), "utf8"));
 const JSON_ONLY = process.argv.includes("--json");
+const SKIP_GRAY = process.argv.includes("--skip-gray");
 
 // ─── Ecosystem labels for markdown headings ──────────────────────────────────
 
@@ -46,6 +47,7 @@ async function main() {
     if (Array.isArray(MANIFEST[key])) results[key] = [];
   }
   results.generated = new Date().toISOString();
+  results.unmatched = [];
 
   const allFindings = [];
 
@@ -64,6 +66,11 @@ async function main() {
 
       // Find the ecosystem-specific provider(s)
       const ecosystemProviders = matchProviders(providers, entry).filter(p => p.name !== "github");
+
+      if (ecosystemProviders.length === 0) {
+        process.stderr.write(`Warning: no provider for ecosystem "${ecosystem}"\n`);
+        results.unmatched.push({ ecosystem, name: pkg.name });
+      }
 
       let version = "?";
       const findings = [];
@@ -87,6 +94,44 @@ async function main() {
       }
       allFindings.push(...findings.map(f => ({ ...f, pkg: pkg.name, ecosystem })));
     }
+  }
+
+  // ─── Fix hints ─────────────────────────────────────────────────────────────
+  // Map common finding codes to actionable fix instructions.
+  const FIX_HINTS = {
+    "published-not-tagged": (f) => `git tag v${f.version ?? "<version>"} && git push origin v${f.version ?? "<version>"}`,
+    "wrong-repo-url": () => "Update the repository field in package.json / .csproj to match the canonical GitHub URL",
+    "missing-homepage": () => "Add a homepage field in package.json pointing to the project landing page or docs",
+    "missing-readme": () => "Add a README.md to the repository root and re-publish",
+    "missing-description": () => "Add a description field in package.json or .nuspec",
+    "bad-description": () => "Replace the description field in package.json with plain text (no HTML)",
+    "missing-bugs-url": () => "Add a bugs.url field in package.json pointing to the GitHub issues page",
+    "missing-keywords": () => "Add a keywords array in package.json",
+    "missing-project-url": () => "Add <PackageProjectUrl> to the .csproj file",
+    "missing-icon": () => "Add <PackageIcon> and include a logo PNG in the .csproj file",
+    "tagged-not-released": (f) => `gh release create ${f.tag ?? "<tag>"} --generate-notes`,
+    "npm-unreachable": () => "Check that the package is published and the name is correct in manifest.json",
+    "nuget-unreachable": () => "Check that the package is published and the ID is correct in manifest.json",
+  };
+
+  for (const f of allFindings) {
+    const hintFn = FIX_HINTS[f.code];
+    if (hintFn) f.fixHint = hintFn(f);
+  }
+
+  // ─── Skip-gray filter ───────────────────────────────────────────────────────
+  // When --skip-gray is set, remove GRAY findings from allFindings and per-package
+  // finding arrays so they are omitted from both JSON output and the markdown report.
+  if (SKIP_GRAY) {
+    const isNotGray = f => f.severity !== "GRAY";
+    for (const [ecosystem, packages] of Object.entries(results)) {
+      if (!Array.isArray(packages)) continue;
+      for (const e of packages) {
+        e.findings = e.findings.filter(isNotGray);
+      }
+    }
+    // Filter the flat allFindings array in-place
+    allFindings.splice(0, allFindings.length, ...allFindings.filter(isNotGray));
   }
 
   // Counts
@@ -134,7 +179,8 @@ async function main() {
     for (const [pkg, findings] of Object.entries(byRepo)) {
       lines.push(`### ${pkg}`);
       for (const f of findings) {
-        lines.push(`- **${f.severity}** [${f.code}] ${f.msg}`);
+        const hint = f.fixHint ? ` — _Fix: ${f.fixHint}_` : "";
+        lines.push(`- **${f.severity}** [${f.code}] ${f.msg}${hint}`);
       }
       lines.push("");
     }

@@ -4,6 +4,27 @@
  * Pattern: known plugin names → npm package names.
  * If the package is installed, import and return it.
  * If not, return null (caller shows install hint).
+ *
+ * ## Plugin Extension Contract
+ *
+ * ### KNOWN_PLUGINS registry
+ * Maps short plugin names (used in CLI flags and internal calls) to their npm
+ * package names. Currently registered plugins:
+ *
+ *   - "assets" → "@mcptoolshop/mcpt-publishing-assets"
+ *     Adds asset-publishing support: generates and uploads screenshots, logos,
+ *     and other binary artefacts as part of the publish pipeline.
+ *
+ * ### How to add a new plugin
+ * 1. Add an entry to KNOWN_PLUGINS: `pluginName: "@scope/mcpt-publishing-<name>"`.
+ * 2. The plugin npm package must export:
+ *      - `name` {string} — matches the KNOWN_PLUGINS key
+ *      - `execute(flags, config)` {Function} — async entry point
+ *      - (optional) `helpText` {string} — shown by `mcpt-publishing help`
+ * 3. Plugins are optional — if the package is not installed, `loadPlugin()`
+ *    returns null and callers display the `installHint()` message.
+ * 4. Plugins must not modify manifest.json directly; they write receipts using
+ *    the shared receipt-writer contract.
  */
 
 const KNOWN_PLUGINS = {

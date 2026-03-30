@@ -11,7 +11,8 @@ export default class NpmHomepageFixer extends Fixer {
   get target() { return "npm"; }
 
   canFix(finding) {
-    return finding.code === "missing-homepage";
+    return finding.code === "missing-homepage" &&
+      (finding.ecosystem === "npm" || finding.ecosystem == null);
   }
 
   describe() {
@@ -24,7 +25,13 @@ export default class NpmHomepageFixer extends Fixer {
     if (opts.remote) {
       const remote = readRemoteFile(entry.repo, "package.json");
       if (!remote) return { needed: false };
-      const data = JSON.parse(remote.content);
+      let data;
+      try {
+        data = JSON.parse(remote.content);
+      } catch (e) {
+        process.stderr.write(`  npm-homepage: failed to parse package.json for ${entry.repo}: ${e.message}\n`);
+        return { needed: false };
+      }
       if (data.homepage) return { needed: false };
       return { needed: true, before: null, after: expected, file: "package.json" };
     }
@@ -51,7 +58,13 @@ export default class NpmHomepageFixer extends Fixer {
     const remote = readRemoteFile(entry.repo, "package.json");
     if (!remote) return { changed: false };
 
-    const data = JSON.parse(remote.content);
+    let data;
+    try {
+      data = JSON.parse(remote.content);
+    } catch (e) {
+      process.stderr.write(`  npm-homepage: failed to parse package.json for ${entry.repo}: ${e.message}\n`);
+      return { changed: false };
+    }
     const before = data.homepage ?? null;
     data.homepage = `https://github.com/${entry.repo}#readme`;
 

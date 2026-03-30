@@ -42,7 +42,7 @@ export class Fixer {
    * @returns {Promise<{ needed: boolean, before?: any, after?: any, file?: string }>}
    */
   async diagnose(entry, ctx, opts = {}) {
-    return { needed: false };
+    throw new Error('Fixer subclass must override diagnose()');
   }
 
   /**

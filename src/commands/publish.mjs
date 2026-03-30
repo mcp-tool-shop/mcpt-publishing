@@ -58,10 +58,23 @@ const CRED_MAP = {
  * @returns {number} Exit code
  */
 export async function execute(flags) {
+  // Validate --repo format (must contain '/')
+  if (flags.repo && typeof flags.repo === "string" && !flags.repo.includes("/")) {
+    process.stderr.write(`Error: --repo must be in "owner/name" format (got: "${flags.repo}")\n`);
+    return EXIT.CONFIG_ERROR;
+  }
+
   // 1. Load config
-  const config = flags.config
-    ? loadConfig(dirname(flags.config))
-    : loadConfig();
+  if (flags.config) {
+    process.env.PUBLISHING_CONFIG = resolve(flags.config);
+  }
+  let config;
+  try {
+    config = loadConfig();
+  } catch (e) {
+    process.stderr.write(`Error loading config: ${e.message}\nCheck publishing.config.json or set PUBLISHING_CONFIG.\n`);
+    return EXIT.CONFIG_ERROR;
+  }
 
   // 2. Read manifest
   const manifestPath = join(config.profilesDir, "manifest.json");
@@ -70,10 +83,21 @@ export async function execute(flags) {
     process.stderr.write(`Run 'mcpt-publishing init' to scaffold the project.\n`);
     return EXIT.CONFIG_ERROR;
   }
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  } catch (e) {
+    process.stderr.write(`Error: manifest.json is invalid JSON: ${e.message}\n`);
+    return EXIT.CONFIG_ERROR;
+  }
 
   // 3. Load providers
   const registryPath = join(__dirname, "..", "..", "scripts", "lib", "registry.mjs");
+  if (!existsSync(registryPath)) {
+    process.stderr.write(`Error: Provider registry not found at ${registryPath}\n`);
+    process.stderr.write(`Ensure the package is installed correctly and scripts/lib/registry.mjs exists.\n`);
+    return EXIT.CONFIG_ERROR;
+  }
   const registryUrl = pathToFileURL(registryPath).href;
   const { loadProviders, matchProviders } = await import(registryUrl);
   const providers = await loadProviders();
@@ -140,6 +164,7 @@ export async function execute(flags) {
   for (const { entry, provider } of tasks) {
     const label = `${entry.name} → ${provider.name}`;
     process.stderr.write(`\nPublishing ${label}${dryRun ? " (dry-run)" : ""}...\n`);
+    if (!flags.json) process.stderr.write(`  cwd: ${cwd}\n`);
 
     try {
       const result = await provider.publish(entry, { dryRun, cwd });
@@ -174,8 +199,12 @@ export async function execute(flags) {
               const gluePath = join(__dirname, "..", "..", "scripts", "lib", "github-glue.mjs");
               const { attachReceiptToRelease } = await import(pathToFileURL(gluePath).href);
               const tagName = `v${result.version}`;
-              attachReceiptToRelease(entry.repo, tagName, receiptFile);
-              process.stderr.write(`  Attached to release ${tagName}\n`);
+              const glueResult = attachReceiptToRelease(entry.repo, tagName, receiptFile);
+              if (!glueResult?.success) {
+                process.stderr.write(`  Warning: receipt attach failed: ${glueResult?.error ?? "unknown"}\n`);
+              } else {
+                process.stderr.write(`  Attached to release...\n`);
+              }
             } catch (e) {
               // GitHub glue failures are non-fatal
               process.stderr.write(`  Warning: GitHub glue failed: ${e.message}\n`);

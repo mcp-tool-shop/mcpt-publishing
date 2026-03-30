@@ -150,6 +150,7 @@ Only needed for publish or API-based fixes:
 | Code | Meaning |
 |------|---------|
 | `0` | Clean — no drift found |
+| `1` | Uncaught exception (Node default) |
 | `2` | RED-severity drift detected |
 | `3` | Configuration or schema error |
 | `4` | Missing credentials |

@@ -27,7 +27,13 @@ export default class NpmRepositoryFixer extends Fixer {
     if (opts.remote) {
       const remote = readRemoteFile(entry.repo, "package.json");
       if (!remote) return { needed: false };
-      const data = JSON.parse(remote.content);
+      let data;
+      try {
+        data = JSON.parse(remote.content);
+      } catch (e) {
+        process.stderr.write(`  npm-repository: failed to parse package.json for ${entry.repo}: ${e.message}\n`);
+        return { needed: false };
+      }
       const current = data.repository;
       const currentUrl = typeof current === "string" ? current : current?.url;
       if (currentUrl === expected.url) return { needed: false };
@@ -61,7 +67,13 @@ export default class NpmRepositoryFixer extends Fixer {
     const remote = readRemoteFile(entry.repo, "package.json");
     if (!remote) return { changed: false };
 
-    const data = JSON.parse(remote.content);
+    let data;
+    try {
+      data = JSON.parse(remote.content);
+    } catch (e) {
+      process.stderr.write(`  npm-repository: failed to parse package.json for ${entry.repo}: ${e.message}\n`);
+      return { changed: false };
+    }
     const before = data.repository ?? null;
     data.repository = {
       type: "git",

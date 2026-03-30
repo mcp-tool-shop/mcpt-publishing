@@ -12,6 +12,7 @@
 
 import { resolve } from "node:path";
 import { loadPlugin, installHint } from "../plugins/loader.mjs";
+import { EXIT } from "../cli/exit-codes.mjs";
 
 export const helpText = `
 mcpt-publishing assets — Logo, icon, and image asset management.
@@ -54,7 +55,7 @@ export async function execute(flags) {
     process.stderr.write("Assets plugin is not installed.\n\n");
     process.stderr.write(`Install it with:\n  ${installHint("assets")}\n\n`);
     process.stderr.write("The assets plugin provides logo/icon generation using sharp.\n");
-    return 0;
+    return EXIT.SUCCESS;
   }
 
   const subcommand = flags._positionals?.[0];
@@ -71,9 +72,9 @@ export async function execute(flags) {
       for (const err of result.errors) {
         process.stderr.write(`  - ${err}\n`);
       }
-      return 3;
+      return EXIT.CONFIG_ERROR;
     }
-    return 0;
+    return EXIT.SUCCESS;
   }
 
   switch (subcommand) {
@@ -86,7 +87,7 @@ export async function execute(flags) {
     default:
       process.stderr.write(`Unknown assets subcommand: ${subcommand}\n`);
       process.stderr.write(`Available: doctor, logo, wire\n`);
-      return 3;
+      return EXIT.CONFIG_ERROR;
   }
 }
 
@@ -107,14 +108,14 @@ async function runDoctor(plugin, flags) {
     }
   }
 
-  return result.ok ? 0 : 3;
+  return result.ok ? EXIT.SUCCESS : EXIT.CONFIG_ERROR;
 }
 
 async function runLogo(plugin, flags) {
   const input = flags.input;
   if (!input) {
     process.stderr.write("Error: --input <path> is required for logo generation.\n");
-    return 3;
+    return EXIT.CONFIG_ERROR;
   }
 
   const outDir = flags.out ? resolve(flags.out) : resolve("assets");
@@ -130,10 +131,10 @@ async function runLogo(plugin, flags) {
       process.stdout.write(`  logo.png  ${result.logo.size} bytes  sha256:${result.logo.sha256.slice(0, 12)}...\n`);
       process.stdout.write(`\nOutput: ${outDir}\n`);
     }
-    return 0;
+    return EXIT.SUCCESS;
   } catch (e) {
     process.stderr.write(`Error generating logos: ${e.message}\n`);
-    return 3;
+    return EXIT.CONFIG_ERROR;
   }
 }
 
@@ -141,7 +142,7 @@ async function runWire(plugin, flags) {
   const repo = flags.repo;
   if (!repo) {
     process.stderr.write("Error: --repo <owner/name> is required for wire.\n");
-    return 3;
+    return EXIT.CONFIG_ERROR;
   }
 
   const cwd = flags.cwd ? resolve(flags.cwd) : process.cwd();
@@ -161,9 +162,9 @@ async function runWire(plugin, flags) {
         process.stdout.write(`  ${c.field} in ${c.file}\n`);
       }
     }
-    return 0;
+    return EXIT.SUCCESS;
   } catch (e) {
     process.stderr.write(`Error wiring assets: ${e.message}\n`);
-    return 3;
+    return EXIT.CONFIG_ERROR;
   }
 }

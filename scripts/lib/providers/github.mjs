@@ -19,6 +19,11 @@ export default class GitHubProvider extends Provider {
   async audit(entry, ctx) {
     const repo = entry.repo;
 
+    // SEQUENTIAL-ONLY CONTRACT: audit() must never be called concurrently for the
+    // same ctx object. The has-then-set pattern below is not atomic — if two callers
+    // raced on the same ctx, both could pass the has() check and set duplicate
+    // promises. The audit pipeline (audit.mjs) processes entries sequentially
+    // (for...of, not Promise.all) specifically to uphold this contract.
     if (!ctx.tags.has(repo)) {
       ctx.tags.set(repo, this.#fetchTags(repo));
     }
@@ -32,7 +37,13 @@ export default class GitHubProvider extends Provider {
 
   #fetchTags(repo) {
     try {
-      const { stdout, exitCode } = execArgs("gh", ["api", `repos/${repo}/tags`, "--jq", ".[].name"], { timeout: 15_000 });
+      // --paginate follows Link-header pagination automatically, handling repos
+      // with more than 100 tags without manual per_page arithmetic.
+      const { stdout, exitCode } = execArgs(
+        "gh",
+        ["api", "--paginate", `repos/${repo}/tags`, "--jq", ".[].name"],
+        { timeout: 60_000 }
+      );
       if (exitCode !== 0) return [];
       return stdout.trim().split("\n").filter(Boolean);
     } catch { return []; }
@@ -40,7 +51,12 @@ export default class GitHubProvider extends Provider {
 
   #fetchReleases(repo) {
     try {
-      const { stdout, exitCode } = execArgs("gh", ["api", `repos/${repo}/releases`, "--jq", ".[].tag_name"], { timeout: 15_000 });
+      // --paginate follows Link-header pagination automatically.
+      const { stdout, exitCode } = execArgs(
+        "gh",
+        ["api", "--paginate", `repos/${repo}/releases`, "--jq", ".[].tag_name"],
+        { timeout: 60_000 }
+      );
       if (exitCode !== 0) return [];
       return stdout.trim().split("\n").filter(Boolean);
     } catch { return []; }

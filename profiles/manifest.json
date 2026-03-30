@@ -23,7 +23,7 @@
     { "name": "@mcptoolshop/physics-svg", "repo": "mcp-tool-shop-org/siege-kit", "audience": "internal" },
     { "name": "@mcptoolshop/promo-kit", "repo": "mcp-tool-shop/mcp-tool-shop", "audience": "internal" },
     { "name": "@mcptoolshop/ai-music-sheets", "repo": "mcp-tool-shop-org/ai-music-sheets", "audience": "front-door" },
-{ "name": "@mcptoolshop/ai-jam-sessions", "repo": "mcp-tool-shop-org/ai-jam-sessions", "audience": "front-door" },
+    { "name": "@mcptoolshop/ai-jam-sessions", "repo": "mcp-tool-shop-org/ai-jam-sessions", "audience": "front-door" },
     { "name": "@mcptoolshop/backprop", "repo": "mcp-tool-shop-org/backprop", "audience": "front-door" },
     { "name": "@mcptoolshop/brand", "repo": "mcp-tool-shop-org/brand", "audience": "internal" },
     { "name": "@mcptoolshop/civility-kernel", "repo": "mcp-tool-shop-org/civility-kernel", "audience": "front-door" },

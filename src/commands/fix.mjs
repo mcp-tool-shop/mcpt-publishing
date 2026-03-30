@@ -59,10 +59,23 @@ Examples:
  * @returns {number} Exit code
  */
 export async function execute(flags) {
+  // Validate --repo format (must contain '/')
+  if (flags.repo && typeof flags.repo === "string" && !flags.repo.includes("/")) {
+    process.stderr.write(`Error: --repo must be in "owner/name" format (got: "${flags.repo}")\n`);
+    return EXIT.CONFIG_ERROR;
+  }
+
   // 1. Load config
-  const config = flags.config
-    ? loadConfig(dirname(flags.config))
-    : loadConfig();
+  if (flags.config) {
+    process.env.PUBLISHING_CONFIG = resolve(flags.config);
+  }
+  let config;
+  try {
+    config = loadConfig();
+  } catch (e) {
+    process.stderr.write(`Error loading config: ${e.message}\nCheck publishing.config.json or set PUBLISHING_CONFIG.\n`);
+    return EXIT.CONFIG_ERROR;
+  }
 
   // 2. Read manifest
   const manifestPath = join(config.profilesDir, "manifest.json");
@@ -71,7 +84,13 @@ export async function execute(flags) {
     process.stderr.write(`Run 'mcpt-publishing init' to scaffold the project.\n`);
     return EXIT.CONFIG_ERROR;
   }
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  } catch (e) {
+    process.stderr.write(`Error: manifest.json is invalid JSON: ${e.message}\n`);
+    return EXIT.CONFIG_ERROR;
+  }
 
   // 3. Run audit to discover drift
   if (!flags.json) {
@@ -89,11 +108,16 @@ export async function execute(flags) {
   const remote = !!flags.remote;
   const prMode = !!flags.pr;
   const cwd = flags.cwd ? resolve(flags.cwd) : process.cwd();
+
+  if (flags.cwd && !existsSync(cwd)) {
+    process.stderr.write('Error: --cwd directory does not exist: ' + cwd + '\n');
+    return EXIT.CONFIG_ERROR;
+  }
   const repoFilter = flags.repo || null;
   const targetFilter = flags.target || null;
 
   // Deduplicate: group findings by repo + fixer to avoid applying same fix twice
-  const fixPlan = new Map(); // key: "repo|fixerCode" → { entry, fixer, findings }
+  const fixPlan = new Map(); // key: JSON.stringify([repo, fixerCode]) → { entry, fixer, findings }
 
   for (const finding of allFindings) {
     // Apply filters
@@ -102,7 +126,7 @@ export async function execute(flags) {
       const entryRepo = findRepoForFinding(manifest, finding);
       if (entryRepo !== repoFilter) continue;
     }
-    if (targetFilter && finding.ecosystem !== targetFilter && targetFilter !== "readme" && targetFilter !== "github") continue;
+    if (targetFilter && !["readme", "github"].includes(targetFilter) && finding.ecosystem !== targetFilter) continue;
 
     const matched = matchFixers(fixers, finding);
     for (const fixer of matched) {
@@ -111,7 +135,7 @@ export async function execute(flags) {
       const entry = findEntryForFinding(manifest, finding);
       if (!entry) continue;
 
-      const key = `${entry.repo}|${fixer.code}`;
+      const key = JSON.stringify([entry.repo, fixer.code]);
       if (!fixPlan.has(key)) {
         fixPlan.set(key, { entry, fixer, findings: [] });
       }
@@ -129,7 +153,7 @@ export async function execute(flags) {
   }
 
   // 6. Apply fixes
-  const mode = dryRun ? "dry-run" : remote ? "remote" : prMode ? "local" : "local";
+  const mode = dryRun ? "dry-run" : remote ? "remote" : prMode ? "pr" : "local";
   const changes = [];
   let failures = 0;
 
@@ -217,10 +241,34 @@ export async function execute(flags) {
         process.stderr.write(`\nCreating PR on branch ${branchName}...\n`);
       }
 
-      execArgs("git", ["checkout", "-b", branchName], { cwd });
-      execArgs("git", ["add", "-A"], { cwd });
-      execArgs("git", ["commit", "-m", "chore: mcpt-publishing fix (automated)"], { cwd });
+      const checkoutResult = execArgs("git", ["checkout", "-b", branchName], { cwd });
+      if (checkoutResult.exitCode !== 0) {
+        process.stderr.write(`  PR aborted: git checkout failed (exit ${checkoutResult.exitCode})\n`);
+        if (checkoutResult.stderr) process.stderr.write(`  stderr: ${checkoutResult.stderr}\n`);
+        throw new Error(`git checkout -b ${branchName} failed`);
+      }
+
+      const addResult = execArgs("git", ["add", "-A"], { cwd });
+      if (addResult.exitCode !== 0) {
+        process.stderr.write(`  PR aborted: git add failed (exit ${addResult.exitCode})\n`);
+        if (addResult.stderr) process.stderr.write(`  stderr: ${addResult.stderr}\n`);
+        throw new Error("git add -A failed");
+      }
+
+      const commitResult = execArgs("git", ["commit", "-m", "chore: mcpt-publishing fix (automated)"], { cwd });
+      if (commitResult.exitCode !== 0) {
+        process.stderr.write(`  PR aborted: git commit failed (exit ${commitResult.exitCode})\n`);
+        if (commitResult.stderr) process.stderr.write(`  stderr: ${commitResult.stderr}\n`);
+        throw new Error("git commit failed");
+      }
+
       const pushResult = execArgs("git", ["push", "-u", "origin", branchName], { cwd });
+
+      if (pushResult.exitCode !== 0) {
+        process.stderr.write(`  PR aborted: git push failed (exit ${pushResult.exitCode})\n`);
+        if (pushResult.stderr) process.stderr.write(`  stderr: ${pushResult.stderr}\n`);
+        throw new Error(`git push -u origin ${branchName} failed`);
+      }
 
       if (pushResult.exitCode === 0) {
         const prBody = [
@@ -304,7 +352,9 @@ function findRepoForFinding(manifest, finding) {
   for (const [ecosystem, packages] of Object.entries(manifest)) {
     if (!Array.isArray(packages)) continue;
     for (const pkg of packages) {
-      if (pkg.name === finding.pkg) return pkg.repo;
+      if (pkg.name === finding.pkg && (finding.ecosystem == null || ecosystem === finding.ecosystem)) {
+        return pkg.repo;
+      }
     }
   }
   return null;
@@ -315,7 +365,7 @@ function findEntryForFinding(manifest, finding) {
   for (const [ecosystem, packages] of Object.entries(manifest)) {
     if (!Array.isArray(packages)) continue;
     for (const pkg of packages) {
-      if (pkg.name === finding.pkg) {
+      if (pkg.name === finding.pkg && (finding.ecosystem == null || ecosystem === finding.ecosystem)) {
         return { ...pkg, ecosystem };
       }
     }

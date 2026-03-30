@@ -1,6 +1,6 @@
 {
   "name": "@mcptoolshop/mcpt-publishing",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Multi-registry publishing auditor — catch drift across npm, PyPI, and NuGet before your users do.",
   "type": "module",
   "bin": {
@@ -26,7 +26,7 @@
     "fix:dry": "node bin/mcpt-publishing.mjs fix --dry-run",
     "weekly": "node bin/mcpt-publishing.mjs weekly",
     "weekly:dry": "node bin/mcpt-publishing.mjs weekly --dry-run",
-    "test": "node scripts/test-providers.mjs",
+    "test": "node scripts/test-providers.mjs && node tests/version.test.mjs",
     "verify": "npm audit --omit=dev && npm test"
   },
   "engines": {

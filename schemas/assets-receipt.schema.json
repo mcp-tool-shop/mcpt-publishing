@@ -1,13 +1,16 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcp-tool-shop/mcpt-publishing/schemas/assets-receipt.schema.json",
   "title": "Assets Receipt",
   "description": "Receipt for asset generation operations (logo, icon, wire).",
   "type": "object",
   "required": ["schemaVersion", "type", "timestamp", "repo", "artifacts"],
+  "additionalProperties": false,
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "enum": ["1.0.0"],
+      "description": "Assets receipt schema version — add future versions here without breaking old receipts"
     },
     "type": {
       "type": "string",
@@ -20,6 +23,7 @@
     "repo": {
       "type": "object",
       "required": ["owner", "name"],
+      "additionalProperties": false,
       "properties": {
         "owner": { "type": "string" },
         "name": { "type": "string" }
@@ -30,6 +34,7 @@
       "items": {
         "type": "object",
         "required": ["name", "sha256", "size"],
+        "additionalProperties": false,
         "properties": {
           "name": { "type": "string" },
           "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
@@ -39,13 +44,16 @@
     },
     "wireChanges": {
       "type": "array",
+      "description": "File mutations made by wire() — each entry records one field change.",
       "items": {
         "type": "object",
+        "required": ["file", "field", "before", "after"],
+        "additionalProperties": false,
         "properties": {
-          "file": { "type": "string" },
-          "field": { "type": "string" },
-          "before": { "type": "string" },
-          "after": { "type": "string" }
+          "file": { "type": "string", "description": "Absolute or relative path to the modified file" },
+          "field": { "type": "string", "description": "Human-readable label for the field that changed (e.g. 'README logo URL')" },
+          "before": { "type": "string", "description": "Value before the change, or '(missing)' if the field was absent" },
+          "after": { "type": "string", "description": "Value after the change" }
         }
       }
     }

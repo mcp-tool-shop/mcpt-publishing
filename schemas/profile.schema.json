@@ -5,7 +5,17 @@
   "description": "Declares what a repo publishes, where, and how.",
   "type": "object",
   "required": ["repo", "packages"],
+  "additionalProperties": false,
   "properties": {
+    "$comment": {
+      "type": "string",
+      "description": "Human-readable annotation — ignored by validators"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "Version of the profile schema this document conforms to (e.g. 1.0.0). Omit to accept the default."
+    },
     "repo": {
       "type": "object",
       "required": ["owner", "name"],
@@ -29,7 +39,8 @@
         "properties": {
           "ecosystem": {
             "type": "string",
-            "enum": ["npm", "nuget", "pypi", "ghcr"]
+            "enum": ["npm", "nuget", "pypi", "ghcr", "github", "smithery", "flyio"],
+            "description": "Canonical ecosystem list — must stay in sync with receipt.schema.json target enum. npm/nuget/pypi/ghcr/github = package registries; smithery/flyio = deployment targets."
           },
           "name": {
             "type": "string",

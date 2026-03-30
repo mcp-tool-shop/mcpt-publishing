@@ -81,17 +81,14 @@ function auditRepo(repo, audience, packages) {
   } else {
     const lower = readme.toLowerCase();
 
-    // Logo at top of README
-    if (!readme.match(/^#?\s*[<!\[]*img|^#?\s*!\[/m) && !readme.match(/<img\s/i)) {
-      // Check for image in first 10 lines
-      const firstLines = readme.split("\n").slice(0, 10).join("\n");
-      if (!firstLines.includes("![") && !firstLines.includes("<img")) {
-        findings.push({
-          severity: isFrontDoor ? "RED" : "YELLOW",
-          code: "readme-no-logo",
-          msg: `${repo} README has no logo at top`
-        });
-      }
+    // Logo at top of README — only inspect first 10 lines to avoid false negatives
+    const top = readme.split("\n").slice(0, 10).join("\n");
+    if (!top.includes("![") && !/<img\s/i.test(top)) {
+      findings.push({
+        severity: isFrontDoor ? "RED" : "YELLOW",
+        code: "readme-no-logo",
+        msg: `${repo} README has no logo at top`
+      });
     }
 
     // Install command
@@ -164,9 +161,14 @@ function auditRepo(repo, audience, packages) {
 // ─── Main ───────────────────────────────────────────────────────────────────
 
 async function main() {
-  // Deduplicate repos and determine audience (front-door wins over internal)
+  // Deduplicate repos and determine audience (front-door wins over internal).
+  // Iterates ALL ecosystems in the manifest so new providers are picked up
+  // automatically without needing to modify this file.
   const repoMap = {};
-  for (const pkg of [...MANIFEST.npm, ...MANIFEST.nuget]) {
+  const allPackages = Object.values(MANIFEST)
+    .filter(Array.isArray)
+    .flat();
+  for (const pkg of allPackages) {
     if (pkg.deprecated) continue;
     if (!repoMap[pkg.repo]) {
       repoMap[pkg.repo] = { audience: pkg.audience, packages: [] };

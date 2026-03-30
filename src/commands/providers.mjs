@@ -5,7 +5,7 @@
  * enabledProviders config, and prints a summary table.
  */
 
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { loadConfig } from "../config/loader.mjs";
 import { EXIT } from "../cli/exit-codes.mjs";
@@ -33,9 +33,16 @@ Output:
  * @returns {number} Exit code
  */
 export async function execute(flags) {
-  const config = flags.config
-    ? loadConfig(dirname(flags.config))
-    : loadConfig();
+  if (flags.config) {
+    process.env.PUBLISHING_CONFIG = resolve(flags.config);
+  }
+  let config;
+  try {
+    config = loadConfig();
+  } catch (e) {
+    process.stderr.write(`Error loading config: ${e.message}\nCheck publishing.config.json or set PUBLISHING_CONFIG.\n`);
+    return EXIT.CONFIG_ERROR;
+  }
 
   // Import provider registry from scripts/lib
   const registryPath = join(__dirname, "..", "..", "scripts", "lib", "registry.mjs");
