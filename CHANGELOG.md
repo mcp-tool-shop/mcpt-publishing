@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-03-30
+
+### Changed
+
+- Refreshed all 7 translations (ES, FR, HI, IT, JA, PT-BR, ZH) to match v1.2.0 README
+
 ## [1.2.0] - 2026-03-30
 
 ### Added

@@ -1,6 +1,6 @@
 {
   "name": "@mcptoolshop/mcpt-publishing",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Multi-registry publishing auditor — catch drift across npm, PyPI, and NuGet before your users do.",
   "type": "module",
   "bin": {

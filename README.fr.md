@@ -150,6 +150,7 @@ Uniquement nécessaires pour la publication ou les corrections basées sur l'API
 | Code | Signification |
 |------|---------|
 | `0` | Clean : aucune incohérence détectée |
+| `1` | Exception non interceptée (Node par défaut). |
 | `2` | Incohérence de gravité ROUGE détectée |
 | `3` | Erreur de configuration ou de schéma |
 | `4` | Identifiants manquants |

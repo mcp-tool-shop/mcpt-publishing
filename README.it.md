@@ -18,9 +18,9 @@
 
 ---
 
-Pubblica su npm, PyPI e NuGet. Nel tempo, le pagine del tuo registro tendono a discostarsi: descrizioni obsolete, link alla homepage mancanti, tag che non corrispondono alle release, intestazioni del file README senza loghi. Nessuno se ne accorge finché un utente non lo fa.
+Pubblicate su npm, PyPI e NuGet. Nel tempo, le pagine del vostro registro tendono a discostarsi: descrizioni obsolete, link alla homepage mancanti, tag che non corrispondono alle versioni, intestazioni del file README senza loghi. Nessuno se ne accorge finché un utente non lo fa.
 
-**mcpt-publishing** analizza i tuoi pacchetti pubblicati su diversi registri, rileva queste discrepanze, le corregge e ti fornisce una ricevuta che attesta le modifiche apportate. Nessuna dipendenza. Node 22+.
+**mcpt-publishing** analizza i pacchetti pubblicati su diversi registri, rileva queste discrepanze, le corregge e vi fornisce una ricevuta che attesta le modifiche apportate. Nessuna dipendenza. Node 22+.
 
 ## Guida rapida
 
@@ -38,7 +38,7 @@ npx mcpt-publishing fix --dry-run
 npx mcpt-publishing fix
 ```
 
-Ecco tutto. Esegui `audit` nell'ambiente di integrazione continua (CI) per rilevare tempestivamente le discrepanze, oppure `weekly` per automatizzare l'intero processo.
+Ecco tutto. Eseguite `audit` nell'ambiente di integrazione continua per rilevare tempestivamente le discrepanze, oppure `weekly` per automatizzare l'intero processo.
 
 ---
 
@@ -46,14 +46,14 @@ Ecco tutto. Esegui `audit` nell'ambiente di integrazione continua (CI) per rilev
 
 | Rilevamento | Gravità | Esempio |
 |---------|----------|---------|
-| Mancanza del campo `repository` in package.json | ROSSO | La pagina npm non mostra il link "Repository" |
-| Mancanza del campo `homepage` | ROSSO | Nessun link alla documentazione o alla pagina di destinazione |
-| Mancanza del campo `bugs.url` | GIALLO | Nessun link al sistema di tracciamento dei problemi su npm |
-| Parole chiave mancanti | GIALLO | Il pacchetto non è visibile nelle ricerche |
+| Manca il campo `repository` in package.json | ROSSO | La pagina npm non mostra il link "Repository" |
+| Manca il campo `homepage` | ROSSO | Nessun link alla documentazione o alla pagina di destinazione |
+| Manca il campo `bugs.url` | GIALLO | Nessun link al sistema di tracciamento dei problemi su npm |
+| Mancano le parole chiave | GIALLO | Il pacchetto non è visibile nelle ricerche |
 | Intestazione del file README obsoleta | GIALLO | Nessun logo, nessuna icona, link errati |
 | Descrizione/homepage non corrispondenti su GitHub | GIALLO | La sezione "About" del repository non corrisponde al registro |
-| NuGet: campo PackageProjectUrl mancante | GIALLO | La pagina NuGet non ha un link alla homepage |
-| Tag/versione della release non corrispondenti | ROSSO | Pubblicata la versione v1.2.0, ma il tag indica v1.1.0 |
+| NuGet: manca il campo `PackageProjectUrl` | GIALLO | La pagina NuGet non ha la homepage |
+| Tag/versione non corrispondenti | ROSSO | Pubblicata la versione 1.2.0, ma il tag indica la versione 1.1.0 |
 
 ## Cosa corregge
 
@@ -71,10 +71,10 @@ npx mcpt-publishing fix --repo owner/my-package        # fix one repo only
 | `npm-repository` | Imposta il campo `repository` in package.json |
 | `npm-homepage` | Imposta il campo `homepage` in package.json |
 | `npm-bugs` | Imposta il campo `bugs.url` in package.json |
-| `npm-keywords` | Aggiunge parole chiave iniziali al file package.json |
-| `readme-header` | Aggiunge logo e link al file README.md |
+| `npm-keywords` | Aggiunge le parole chiave iniziali al file package.json |
+| `readme-header` | Aggiunge il logo e i link al file README.md |
 | `github-about` | Imposta la descrizione/homepage tramite l'API di GitHub |
-| `nuget-csproj` | Aggiunge PackageProjectUrl/RepositoryUrl al file .csproj |
+| `nuget-csproj` | Aggiunge `PackageProjectUrl`/`RepositoryUrl` al file .csproj |
 
 ## Pubblicazione con ricevute
 
@@ -90,7 +90,7 @@ npx mcpt-publishing verify-receipt receipts/publish/2026-03-01.json
 
 ## La pipeline settimanale
 
-Esegui l'intero ciclo con un solo comando: analisi, correzione e, facoltativamente, pubblicazione:
+Eseguite l'intero ciclo con un solo comando: analisi, correzione e, facoltativamente, pubblicazione:
 
 ```bash
 npx mcpt-publishing weekly --dry-run     # preview everything
@@ -100,9 +100,9 @@ npx mcpt-publishing weekly --publish     # the full pipeline
 
 ---
 
-## Configurazione del tuo manifest
+## Configurazione del manifest
 
-Dopo l'esecuzione di `init`, modifica il file `profiles/manifest.json` per dichiarare i tuoi pacchetti:
+Dopo l'esecuzione di `init`, modificate il file `profiles/manifest.json` per dichiarare i vostri pacchetti:
 
 ```json
 {
@@ -118,8 +118,8 @@ Dopo l'esecuzione di `init`, modifica il file `profiles/manifest.json` per dichi
 }
 ```
 
-**Audience** controlla il livello di rigore:
-- `front-door`: rivolto al pubblico. Richiede metadati puliti, tag e release, file README corretti.
+`Audience` controlla il livello di rigore:
+- `front-door`: rivolto al pubblico. Richiede metadati puliti, tag e versione corrispondenti, file README appropriato.
 - `internal`: supporta i pacchetti. Richiede il tag, il file README è facoltativo.
 
 ## Opzionale: plugin per gli asset
@@ -150,6 +150,7 @@ Necessarie solo per la pubblicazione o per le correzioni basate sull'API:
 | Codice | Significato |
 |------|---------|
 | `0` | Clean: nessuna discrepanza rilevata |
+| `1` | Eccezione non gestita (comportamento predefinito di Node) |
 | `2` | Discrepanza di gravità ROSSA rilevata |
 | `3` | Errore di configurazione o di schema |
 | `4` | Credenziali mancanti |
@@ -158,7 +159,7 @@ Necessarie solo per la pubblicazione o per le correzioni basate sull'API:
 
 ## Ricevute
 
-Ogni operazione (analisi, correzione, pubblicazione, asset) scrive una ricevuta JSON immutabile nella directory `receipts/`. Ognuna include l'hash SHA del commit, i timestamp, gli hash SHA-256 degli artefatti e gli URL del registro. Verifica qualsiasi ricevuta:
+Ogni operazione (analisi, correzione, pubblicazione, asset) scrive una ricevuta JSON immutabile nella cartella `receipts/`. Ognuna include l'hash SHA del commit, i timestamp, gli hash SHA-256 degli artefatti e gli URL del registro. Verificate qualsiasi ricevuta:
 
 ```bash
 npx mcpt-publishing verify-receipt receipts/audit/2026-03-01.json
@@ -166,10 +167,10 @@ npx mcpt-publishing verify-receipt receipts/audit/2026-03-01.json
 
 ## Sicurezza
 
-| Aspetto | Dettagli |
+| Aspetto | Dettaglio |
 |--------|--------|
-| **Reads** | File di manifest dei pacchetti, API dei registri (npm, NuGet, PyPI). |
-| **Writes** | I file delle ricevute vengono salvati solo nei percorsi specificati dall'utente. |
+| **Reads** | File di manifest dei pacchetti, API dei registri (npm, NuGet, PyPI) |
+| **Writes** | I file di ricevuta vengono salvati solo nei percorsi specificati dall'utente. |
 | **Network** | Le query alle API dei registri sono in sola lettura, a meno che non si stia pubblicando. |
 | **Telemetry** | Nessuno. Nessuna analisi, nessuna trasmissione di dati. |
 

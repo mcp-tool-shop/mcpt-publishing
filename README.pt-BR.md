@@ -150,6 +150,7 @@ Necessárias apenas para publicação ou correções baseadas em API:
 | Código | Significado |
 |------|---------|
 | `0` | Clean — nenhuma inconsistência encontrada. |
+| `1` | Exceção não capturada (Node padrão). |
 | `2` | Inconsistência de gravidade VERMELHA detectada. |
 | `3` | Erro de configuração ou esquema. |
 | `4` | Credenciais ausentes. |

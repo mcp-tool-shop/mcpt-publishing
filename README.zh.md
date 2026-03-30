@@ -150,6 +150,7 @@ npx mcpt-publishing assets wire --repo owner/name
 | 代码 | 含义 |
 |------|---------|
 | `0` | Clean：未发现偏差 |
+| `1` | 未捕获的异常 (Node 默认)。 |
 | `2` | RED-severity：检测到严重偏差 |
 | `3` | 配置或模式错误 |
 | `4` | 缺少凭据 |

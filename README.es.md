@@ -150,6 +150,7 @@ Solo necesarias para la publicación o las correcciones basadas en la API:
 | Código | Significado |
 |------|---------|
 | `0` | Clean: no se detectó ninguna desincronización. |
+| `1` | Excepción no capturada (Node predeterminado). |
 | `2` | Se detectó una desincronización de severidad ROJA. |
 | `3` | Error de configuración o de esquema. |
 | `4` | Credenciales faltantes. |
