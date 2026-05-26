@@ -4,7 +4,7 @@
 
 ## npm Packages (49 @mcptoolshop + 13 @attestia = 62 total)
 
-### @mcptoolshop scope (49)
+### @mcptoolshop scope (47)
 
 | # | Package | Repo | Audience | Notes |
 |---|---------|------|----------|-------|
@@ -51,12 +51,10 @@
 | 41 | @mcptoolshop/throttleai | mcp-tool-shop-org/ThrottleAI | front-door | AI throttling |
 | 42 | @mcptoolshop/toolshopstudio | mcp-tool-shop-org/toolshopstudio | front-door | Tool Shop Studio |
 | 43 | @mcptoolshop/vocal-synth-engine | mcp-tool-shop-org/vocal-synth-engine | front-door | Vocal synthesis |
-| 44 | @mcptoolshop/logo-presets | mcp-tool-shop/mcpt-logo-presets | internal | Logo presets |
-| 45 | @mcptoolshop/logo-studio | mcp-tool-shop/mcpt-logo-studio | internal | Logo generator |
-| 46 | @mcptoolshop/mcpt-publishing | mcp-tool-shop/mcpt-publishing | internal | Publishing house |
-| 47 | @mcptoolshop/mcpt-publishing-assets | mcp-tool-shop/mcpt-publishing | internal | Publishing assets |
-| 48 | @mcptoolshop/mcpt-link-fresh | mcp-tool-shop/mcpt-link-fresh | internal | Link freshness |
-| 49 | @mcptoolshop/repomesh | mcp-tool-shop-org/repomesh | front-door | Repo mesh |
+| 44 | @mcptoolshop/mcpt-publishing | mcp-tool-shop/mcpt-publishing | internal | Publishing house |
+| 45 | @mcptoolshop/mcpt-publishing-assets | mcp-tool-shop/mcpt-publishing | internal | Publishing assets |
+| 46 | @mcptoolshop/mcpt-link-fresh | mcp-tool-shop/mcpt-link-fresh | internal | Link freshness |
+| 47 | @mcptoolshop/repomesh | mcp-tool-shop-org/repomesh | front-door | Repo mesh |
 
 ### @attestia scope (13)
 

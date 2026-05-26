@@ -42,8 +42,6 @@
     { "name": "@mcptoolshop/site-theme", "repo": "mcp-tool-shop-org/site-theme", "audience": "internal" },
     { "name": "@mcptoolshop/throttleai", "repo": "mcp-tool-shop-org/ThrottleAI", "audience": "front-door" },
     { "name": "@mcptoolshop/vocal-synth-engine", "repo": "mcp-tool-shop-org/vocal-synth-engine", "audience": "front-door" },
-    { "name": "@mcptoolshop/logo-presets", "repo": "mcp-tool-shop/mcpt-logo-presets", "audience": "internal" },
-    { "name": "@mcptoolshop/logo-studio", "repo": "mcp-tool-shop/mcpt-logo-studio", "audience": "internal" },
     { "name": "@mcptoolshop/mcpt-publishing", "repo": "mcp-tool-shop/mcpt-publishing", "audience": "internal" },
     { "name": "@mcptoolshop/mcpt-link-fresh", "repo": "mcp-tool-shop/mcpt-link-fresh", "audience": "internal" },
     { "name": "@mcptoolshop/toolshopstudio", "repo": "mcp-tool-shop-org/toolshopstudio", "audience": "front-door" },
